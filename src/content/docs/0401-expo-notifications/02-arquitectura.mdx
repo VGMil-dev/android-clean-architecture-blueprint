@@ -5,6 +5,8 @@ description: Estructura Feature-Based Architecture relajada para escalabilidad.
 
 import TechStack from '../../../components/TechStack.astro';
 import GuideStep from '../../../components/GuideStep.astro';
+import ZoomImage from '../../../components/ZoomImage.astro';
+import pushArchImg from '../../../assets/napkin_push_architecture.png';
 
 <GuideStep />
 
@@ -12,7 +14,7 @@ El código desordenado es el enemigo de la escalabilidad. Usaremos una estructur
 
 ## Diagrama de Flujo de Datos
 
-![Arquitectura Push Notification](@assets/napkin_push_architecture.png)
+<ZoomImage src={pushArchImg} alt="Arquitectura Push Notification" />
 
 ### Arquitectura Push Notification
 *   **User App**: Tu aplicación Expo. Contiene `google-services.json` (Android) para autenticarse con FCM al iniciar.
@@ -68,7 +70,7 @@ El código desordenado es el enemigo de la escalabilidad. Usaremos una estructur
 └── 📘 tsconfig.json
 ```
 
-## El Adaptador de Storage (Core)
+## El Adaptador de Storage (Core) 
 
 Ubicado en `src/lib/core/storage/storage.adapter.ts`, este módulo maneja la diferencia entre web y móvil.
 

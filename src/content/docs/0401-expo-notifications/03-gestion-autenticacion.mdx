@@ -1,0 +1,112 @@
+---
+title: Gestión de Autenticación
+description: Contexto de autenticación para vincular dispositivos con usuarios.
+---
+
+import ZoomImage from '../../../components/ZoomImage.astro';
+import missingLinkImg from '../../../assets/napkin_missing_link.png';
+import GuideStep from '../../../components/GuideStep.astro';
+
+<GuideStep />
+
+Las notificaciones push son personales. Necesitamos saber a quién enviárselas.
+
+## El Eslabón Perdido
+
+<ZoomImage src={missingLinkImg} alt="El Eslabón Perdido: Token + Sesión" />
+
+Para los servidores de Apple o Google, un teléfono es solo un código anónimo: `ExponentPushToken[123...]`.
+
+Si guardamos ese token solo, no sabremos a quién pertenece. Aquí es donde entra la **Sesión**. La sesión contiene el `user_id` (UUID) de tu base de datos.
+
+> **Token (Dispositivo) + Sesión (Usuario) = Notificación Personalizada ✅**
+
+Para lograr esto, no podemos estar llamando a la API en cada pantalla. Crearemos un **Contexto de Autenticación** para tener el usuario disponible en toda la app.
+
+## AuthProvider Component
+
+Crea el archivo `src/lib/modules/auth/AuthProvider.tsx`:
+
+```tsx {13-18,26-37,53-55}
+//src/lib/modules/auth/AuthProvider.tsx
+import { Session } from '@supabase/supabase-js';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { supabase } from '../../core/supabase/client.supabase';
+
+type AuthContextType = {
+    session: Session | null;
+    loading: boolean;
+    signInWithEmail: (email: string, password: string) => Promise<void>;
+    signOut: () => Promise<void>;
+};
+
+const AuthContext = createContext<AuthContextType>({
+    session: null,
+    loading: true,
+    signInWithEmail: async () => { },
+    signOut: async () => { },
+});
+
+export const useAuth = () => useContext(AuthContext);
+
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+    const [session, setSession] = useState<Session | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setSession(session);
+            setLoading(false);
+        });
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setSession(session);
+        });
+
+        return () => subscription.unsubscribe();
+    }, []);
+
+    const signInWithEmail = async (email: string, password: string) => {
+        const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        });
+        if (error) throw error;
+    };
+
+    const signOut = async () => {
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+    };
+
+    return (
+        <AuthContext.Provider value={{ session, loading, signInWithEmail, signOut }}>
+            {children}
+        </AuthContext.Provider>
+    );
+};
+```
+
+## ¿Cómo usarlo?
+
+Envuelve tu aplicación en el `_layout.tsx` raíz:
+
+```tsx {6-8}
+// src/app/_layout.tsx
+import { AuthProvider } from '../lib/modules/auth/AuthProvider';
+
+export default function RootLayout() {
+  return (
+    <AuthProvider>
+      <Stack /> {/* El resto de tu app */}
+    </AuthProvider>
+  );
+}
+```
+
+Y luego, en cualquier componente donde necesites el ID para registrar el dispositivo:
+
+```tsx {2}
+const { session } = useAuth();
+const userId = session?.user.id; // ¡Este es el UUID que necesitamos!
+```
