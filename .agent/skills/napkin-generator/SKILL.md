@@ -15,15 +15,16 @@ Use this skill when the user wants a "napkin style", "hand drawn", or "rough ske
     *   Call the `generate_image` tool.
     *   **ImageName**: `napkin_[subject_snake_case]` (e.g., `napkin_login_flow`).
     *   **Prompt**: 
-        > "Photorealistic top-down view of a white paper napkin with a hand-drawn diagram on it. The diagram depicts [SUBJECT]. Drawn in blue ballpoint pen. fast, loose, sketchy lines. Arrows, simple boxes, scribbled text (illegible). The napkin has texture and slight creases. Lighting is soft, realistic. The style is 'napkin back-of-the-envelope calculation'. Context: Mobile repair business technical notes."
+        > "Digital hand-drawn diagram in the style of napkin.ai. Professional technical architecture diagram depicting [SUBJECT]. **Text MUST be in SPANISH**. Key terms: [SPANISH_TERMS]. Background: Transparent (or solid dark hex #121617 if transparency not supported). Lines are clean white and chalk-white. Accents in Gold (#cfa34b) and Teal. High contrast, neon-like but hand-drawn aesthetic. No paper texture. Clean, readable, professional. Context: Modern mobile app architecture."
 
 3.  **Locate and Move**:
     *   The `generate_image` tool will save the file to the artifacts directory. Examples of this path are usually shown in the tool output (e.g., `/Users/name/.gemini/antigravity/brain/...`).
     *   You MUST move or copy this file to the project's assets folder: `src/assets/`.
     *   Construct the target path: `src/assets/napkin_[subject_snake_case].png`.
     *   Use `run_command` to copy the file.
-        *   Command: `Copy-Item -Path '[ARTIFACT_PATH]' -Destination 'src/assets/napkin_[subject_snake_case].png'`
+    *   *Command*: `Copy-Item -Path '[ARTIFACT_PATH]' -Destination 'src/assets/napkin_[subject_snake_case].png' -Force`
 
-4.  **Confirm**:
-    *   Notify the user that the image has been generated and saved to `src/assets/`.
-    *   Provide the usage example for Markdown/MDX: `![Description](@assets/napkin_[subject_snake_case].png)`.
+4.  **Verify**:
+    *   Check the generated image (you effectively see it when it is created or notified).
+    *   **CRITICAL**: Ask the user: "He generado la imagen. ¿Es legible el texto y están correctas las frases en español? Si hay garabatos o texto ilegible, ¿quieres que la regenere?"
+    *   If the user approves, you are done. If not, retry step 2 with a refined prompt emphasizing "Legible Spanish Text".

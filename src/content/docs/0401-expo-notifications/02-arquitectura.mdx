@@ -1,0 +1,130 @@
+---
+title: Arquitectura del Proyecto
+description: Estructura Feature-Based Architecture relajada para escalabilidad.
+---
+
+import TechStack from '../../../components/TechStack.astro';
+
+<span class="text-sm font-medium text-purple-400">Paso 2 de 7</span>
+
+El código desordenado es el enemigo de la escalabilidad. Usaremos una estructura basada en **Feature-Based Architecture** relajada, separando claramente nuestra lógica de negocio, UI y servicios externos.
+
+## Diagrama de Flujo de Datos
+
+![Arquitectura Push Notification](@assets/napkin_push_architecture.png)
+
+### Arquitectura Push Notification
+*   **User App**: Tu aplicación Expo. Contiene `google-services.json` (Android) para autenticarse con FCM al iniciar.
+*   **Supabase**: Almacena los tokens de los usuarios y dispara eventos desde la Base de Datos (Postgres Triggers/Edge Functions).
+*   **Expo Push Service**: Intermediario que facilita el envío eludiendo la complejidad de conectarse directo a Apple/Google.
+
+### Credenciales & Config
+*   `eas.json`: Define perfiles de build (dev/prod).
+*   **Credentials**: `.p8` (Apple) y `Service Account` (Google) subidos a Expo.
+
+## Estructura de Carpetas
+
+```text
+📂 src/
+├── 📱 app/                          # Capa de Presentación
+│   ├── 🔐 (auth)/
+│   │   ├── login.tsx
+│   │   └── register.tsx
+│   ├── 📑 (tabs)/
+│   │   ├── feed.tsx
+│   │   └── profile.tsx
+│   ├── 🖼️ _layout.tsx               # Providers Globales
+│   └── 🚀 entry.tsx
+├── 🧱 components/                   # UI Kit & Atoms
+│   ├── 🔘 ui/
+│   │   ├── Button.tsx
+│   │   └── Input.tsx
+│   └── 🔔 notifications/
+│       └── Toast.tsx
+└── 📚 lib/                          # 🧠 El Cerebro de la App
+    ├── 🧠 core/                     # Utilidades Agnósticas
+    │   ├── 🎨 constants/            # Constantes Divididas
+    │   │   ├── theme.ts             # Colores y fuentes
+    │   │   └── layout.ts            # Tamaños y espaciados
+    │   ├── 🔔 notifications/        # Infraestructura Push
+    │   │   ├── notification.adapter.ts
+    │   │   └── usePushNotifications.ts
+    │   ├── 💾 storage/              # Persistencia Híbrida
+    │   │   └── storage.adapter.ts
+    │   └── ⚡ supabase/             # Cliente Backend
+    │       └── client.supabase.ts
+    └── 📦 modules/                  # Lógica de Negocio (Features)
+        └── 👤 auth/
+            ├── AuthProvider.tsx
+            └── auth.service.ts
+```
+
+## El Adaptador de Storage (Core)
+
+Ubicado en `src/lib/core/storage/storage.adapter.ts`, este módulo maneja la diferencia entre web y móvil.
+
+```typescript
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
+
+export const storageAdapter = {
+  getItem: (key: string) => {
+    if (Platform.OS === 'web') {
+      return typeof localStorage !== 'undefined' ? localStorage.getItem(key) : null;
+    }
+    return AsyncStorage.getItem(key);
+  },
+  setItem: (key: string, value: string) => {
+    if (Platform.OS === 'web') {
+      if (typeof localStorage !== 'undefined') localStorage.setItem(key, value);
+      return Promise.resolve();
+    }
+    return AsyncStorage.setItem(key, value);
+  },
+  removeItem: (key: string) => {
+    if (Platform.OS === 'web') {
+      if (typeof localStorage !== 'undefined') localStorage.removeItem(key);
+      return Promise.resolve();
+    }
+    return AsyncStorage.removeItem(key);
+  },
+};
+```
+
+## El Cliente de Supabase
+
+Inicializamos el cliente en `src/lib/core/supabase/client.supabase.ts`:
+
+```typescript
+import { createClient } from '@supabase/supabase-js';
+import { storageAdapter } from '../storage/storage.adapter';
+
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '';
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    storage: storageAdapter, // ¡Magia! ✨ Funciona en Web y App
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: false,
+  },
+});
+```
+
+### ¿Dónde encuentro estas credenciales?
+Estas variables no se inventan, se obtienen directamente de tu proyecto en Supabase:
+
+1.  Entra a tu Dashboard en [supabase.com](https://supabase.com).
+2.  Ve a **Settings (Configuración)** en la barra lateral.
+3.  Selecciona **API**.
+4.  Copia la URL del proyecto en **Project URL**.
+5.  Copia la clave pública en **Project API keys** (etiquetada como `anon` y `public`).
+
+:::caution[Seguridad]
+**Nunca** compartas tu `service_role_key` (secret) en el código del frontend. Solo usa la clave `anon`.
+:::
+
+:::note[Variables de Entorno]
+¡Ojo! No olvides configurar tus variables de entorno en un archivo `.env` en la raíz del proyecto para que `process.env` funcione y reiniciar el servidor de desarrollo.
+:::

@@ -1,9 +1,9 @@
 ---
-import { Badge } from '@astrojs/starlight/components';
+import { Badge } from "@astrojs/starlight/components";
 
 interface TechItem {
   tecnologia: string;
-  color: 'note' | 'danger' | 'success' | 'caution' | 'tip' | 'default';
+  color: "note" | "danger" | "success" | "caution" | "tip" | "default";
 }
 
 interface Props {
@@ -14,7 +14,5 @@ const { techs } = Astro.props;
 ---
 
 <div class="flex gap-2 mb-6 flex-wrap">
-  {techs.map((item) => (
-    <Badge text={item.tecnologia} variant={item.color} />
-  ))}
+  {techs.map((item) => <Badge text={item.tecnologia} variant={item.color} />)}
 </div>
