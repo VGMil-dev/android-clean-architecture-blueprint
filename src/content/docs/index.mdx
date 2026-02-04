@@ -1,40 +1,40 @@
 ---
-title: Welcome to Starlight
-description: Get started building your docs site with Starlight.
-template: splash # Remove or comment out this line to display the site sidebar on this page.
+title: RepoMovil
+description: Platforma central para material y documentación de proyectos.
+template: splash
 hero:
-  tagline: Congrats on setting up a new Starlight project!
+  tagline: Tu centro de comando para la documentación académica.
   image:
-    file: ../../assets/houston.webp
+    file: ../../assets/logo.png
   actions:
-    - text: Example Guide
-      link: /guides/example/
+    - text: Explorar Material
+      link: /guides/notificaciones-push/
       icon: right-arrow
-    - text: Read the Starlight docs
-      link: https://starlight.astro.build
+      variant: primary
+    - text: GitHub del Curso
+      link: https://github.com
       icon: external
       variant: minimal
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
-## Next steps
+<div class="hero-html">
+  <p style="font-size: 1.5rem; text-align: center; max-width: 800px; margin: 0 auto 3rem; line-height: 1.6; text-wrap: balance;">
+    Bienvenido a <strong style="color: var(--sl-color-accent);">RepoMovil</strong>. <br/>
+    Aquí centralizamos todo el conocimiento: desde guías paso a paso hasta la documentación técnica de nuestros proyectos.
+  </p>
+</div>
 
 <CardGrid stagger>
-	<Card title="Update content" icon="pencil">
-		Edit `src/content/docs/index.mdx` to see this page change.
+	<Card title="Documentación Clara" icon="open-book">
+		Guías detalladas para implementar funcionalidades complejas.
 	</Card>
-	<Card title="Change page layout" icon="document">
-		Delete `template: splash` in `src/content/docs/index.mdx` to display a
-		sidebar on this page.
+	<Card title="Recursos del Curso" icon="rocket">
+		Acceso directo a repositorios, librerías y herramientas.
 	</Card>
-	<Card title="Add new content" icon="add-document">
-		Add Markdown or MDX files to `src/content/docs` to create new pages.
-	</Card>
-	<Card title="Configure your site" icon="setting">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
-	</Card>
-	<Card title="Read the docs" icon="open-book">
-		Learn more in [the Starlight Docs](https://starlight.astro.build/).
+	<Card title="Proyectos Reales" icon="laptop">
+		Ejemplos prácticos y casos de estudio para aplicar lo aprendido.
 	</Card>
 </CardGrid>
+

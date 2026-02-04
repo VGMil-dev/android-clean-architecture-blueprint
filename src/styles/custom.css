@@ -1,0 +1,38 @@
+:root {
+    --sl-color-accent-low: #4d3e20;
+    --sl-color-accent: #cfa34b;
+    --sl-color-accent-high: #eecd85;
+    --sl-hue-accent: 40;
+    --sl-hue-teal: 180;
+    /* Typography */
+    --sl-font-system-sans: 'JetBrains Mono', monospace;
+    --sl-font-mono: 'JetBrains Mono', monospace;
+}
+
+body,
+:root {
+    font-family: 'JetBrains Mono', monospace !important;
+    --sl-font-system-sans: 'JetBrains Mono', monospace !important;
+}
+
+
+[data-theme='dark'] {
+    --sl-color-bg-nav: #121617;
+    --sl-color-bg: #0d1112;
+    --sl-color-bg-sidebar: #121617;
+}
+
+[data-theme='light'] {
+    --sl-color-bg-nav: #eceded;
+    --sl-color-bg: #fff;
+    --sl-color-bg-sidebar: #eceded;
+    --sl-color-text-sidebar: #121617;
+    --sl-color-text: #121617;
+    --sl-color-text-accent: #9f7d2f;
+    --sl-color-heading: #121617;
+}
+
+.hero-html h1 {
+    color: var(--sl-color-accent-high);
+    text-shadow: 0 0 20px rgba(207, 163, 75, 0.3);
+}
