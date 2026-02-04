@@ -4,8 +4,9 @@ description: Estructura Feature-Based Architecture relajada para escalabilidad.
 ---
 
 import TechStack from '../../../components/TechStack.astro';
+import GuideStep from '../../../components/GuideStep.astro';
 
-<span class="text-sm font-medium text-purple-400">Paso 2 de 7</span>
+<GuideStep />
 
 El código desordenado es el enemigo de la escalabilidad. Usaremos una estructura basada en **Feature-Based Architecture** relajada, separando claramente nuestra lógica de negocio, UI y servicios externos.
 
@@ -24,39 +25,47 @@ El código desordenado es el enemigo de la escalabilidad. Usaremos una estructur
 
 ## Estructura de Carpetas
 
-```text
-📂 src/
-├── 📱 app/                          # Capa de Presentación
-│   ├── 🔐 (auth)/
-│   │   ├── login.tsx
-│   │   └── register.tsx
-│   ├── 📑 (tabs)/
-│   │   ├── feed.tsx
-│   │   └── profile.tsx
-│   ├── 🖼️ _layout.tsx               # Providers Globales
-│   └── 🚀 entry.tsx
-├── 🧱 components/                   # UI Kit & Atoms
-│   ├── 🔘 ui/
-│   │   ├── Button.tsx
-│   │   └── Input.tsx
-│   └── 🔔 notifications/
-│       └── Toast.tsx
-└── 📚 lib/                          # 🧠 El Cerebro de la App
-    ├── 🧠 core/                     # Utilidades Agnósticas
-    │   ├── 🎨 constants/            # Constantes Divididas
-    │   │   ├── theme.ts             # Colores y fuentes
-    │   │   └── layout.ts            # Tamaños y espaciados
-    │   ├── 🔔 notifications/        # Infraestructura Push
-    │   │   ├── notification.adapter.ts
-    │   │   └── usePushNotifications.ts
-    │   ├── 💾 storage/              # Persistencia Híbrida
-    │   │   └── storage.adapter.ts
-    │   └── ⚡ supabase/             # Cliente Backend
-    │       └── client.supabase.ts
-    └── 📦 modules/                  # Lógica de Negocio (Features)
-        └── 👤 auth/
-            ├── AuthProvider.tsx
-            └── auth.service.ts
+```bash
+📂 /
+├──  src/
+│   ├── 📱 app/                      # Capa de Presentación
+│   │   ├── 🔐 (auth)/
+│   │   │   ├── login.tsx
+│   │   │   └── register.tsx
+│   │   ├── 📑 (tabs)/
+│   │   │   ├── feed.tsx
+│   │   │   └── profile.tsx
+│   │   ├── 🖼️ _layout.tsx           # Providers Globales
+│   │   └── 🚀 entry.tsx
+│   ├── 🧱 components/               # UI Kit & Atoms
+│   │   ├── 🔘 ui/
+│   │   │   ├── Button.tsx
+│   │   │   └── Input.tsx
+│   │   └── 🔔 notifications/
+│       │   └── Toast.tsx
+│   └── 📚 lib/                      # 🧠 El Cerebro de la App
+│       ├── 🧠 core/                 # Utilidades Agnósticas
+│       │   ├── 🎨 constants/        # Constantes Divididas
+│       │   │   ├── theme.ts         # Colores y fuentes
+│       │   │   └── layout.ts        # Tamaños y espaciados
+│       │   ├── 🔔 notifications/    # Infraestructura Push
+│       │   │   ├── notification.adapter.ts
+│       │   │   └── usePushNotifications.ts
+│       │   ├── 💾 storage/          # Persistencia Híbrida
+│       │   │   └── storage.adapter.ts
+│       │   └── ⚡ supabase/         # Cliente Backend
+│       │       └── client.supabase.ts
+│       └── 📦 modules/              # Lógica de Negocio (Features)
+│           └── 👤 auth/
+│               ├── AuthProvider.tsx
+│               └── auth.service.ts
+├── ⚙️ app.json                      # Configuración de Expo
+├── 🌩️ eas.json                      # Configuración de EAS Build
+├── 🤖 google-services.json          # Credenciales Firebase (Android)
+├── 🍎 GoogleService-Info.plist      # Credenciales Firebase (iOS)
+├── 🔧 babel.config.js
+├── 📦 package.json
+└── 📘 tsconfig.json
 ```
 
 ## El Adaptador de Storage (Core)
