@@ -27,7 +27,21 @@ export default defineConfig({
 				},
 				{
 					label: 'Expo Notifications',
-					autogenerate: { directory: '0401-expo-notifications' },
+					items: [
+						{ slug: '0401-expo-notifications/01-introduccion' },
+						{ slug: '0401-expo-notifications/02-setup' },
+						{ slug: '0401-expo-notifications/03-arquitectura' },
+						{
+							label: 'Gestión de Autenticación',
+							items: [
+								{
+									label: 'Conceptos',
+									slug: '0401-expo-notifications/04-gestion-autenticacion'
+								},
+								{ slug: '0401-expo-notifications/04a-el-adaptador' },
+							],
+						},
+					],
 				},
 			],
 		}),
