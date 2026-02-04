@@ -15,6 +15,7 @@ body,
 :root {
     font-family: 'JetBrains Mono', monospace !important;
     --sl-font-system-sans: 'JetBrains Mono', monospace !important;
+    --sl-content-width: 65rem !important;
 }
 
 
