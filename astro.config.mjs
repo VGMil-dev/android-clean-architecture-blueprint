@@ -29,10 +29,6 @@ export default defineConfig({
 					label: 'Expo Notifications',
 					autogenerate: { directory: '0401-expo-notifications' },
 				},
-				{
-					label: 'Reference',
-					autogenerate: { directory: 'reference' },
-				},
 			],
 		}),
 	],
