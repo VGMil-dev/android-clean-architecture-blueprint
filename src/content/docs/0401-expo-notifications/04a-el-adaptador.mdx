@@ -1,0 +1,112 @@
+---
+title: El Adaptador (Infraestructura)
+description: Configuración del adaptador de notificaciones, canales y permisos.
+---
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import GuideStep from '@components/GuideStep.astro';
+import Highlight from '@components/Highlight.astro';
+
+<GuideStep />
+
+Antes de pensar en lógica de negocio, necesitamos una pieza de código "sucia" pero necesaria: la que habla con Apple (APNs) y Google (FCM).
+
+## ¿Qué hace este archivo?
+
+- 🔧 <Highlight>Configura</Highlight> cómo se comportan las notificaciones (sonido, alertas).
+- 🤖 <Highlight variant="purple">Configura canales</Highlight> de Android (vibración, color de LED).
+- 👮‍♀️ <Highlight variant="blue">Gestiona los Permisos</Highlight> del Sistema Operativo.
+- 🎟️ <Highlight variant="green">Obtiene el Token</Highlight> único de Expo.
+
+## Implementación
+
+```typescript {12-16, 42-49, 57, 62, 73-75}
+//src/lib/core/notifications/notification.adapter.ts
+import { Platform } from 'react-native';
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
+
+export const NotificationAdapter = {
+  // 1. Configuración Global ------------------------------------------
+  setup: () => {
+    // Definimos qué pasa si recibimos una notificación con la APP ABIERTA (Foreground)
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        // 🔔 shouldShowAlert: 
+        // true = Permite mostrar alertas visuales en general.
+        // false = Silencia la notificación visualmente.
+        shouldShowAlert: true,
+
+        // 🔊 shouldPlaySound: 
+        // true = Reproduce el sonido o vibración del sistema.
+        shouldPlaySound: true,
+
+        // 🔴 shouldSetBadge: 
+        // false = No altera el contador rojo de la app (Home Screen).
+        shouldSetBadge: false,
+
+        // 🏳️ shouldShowBanner (iOS Nuevo Standard):
+        // true = Muestra el banner deslizable desde arriba (como un mensaje normal).
+        shouldShowBanner: true,
+
+        // 📜 shouldShowList (iOS Nuevo Standard):
+        // true = Mantiene la notificación visible en el Centro de Notificaciones.
+        shouldShowList: true,
+      }),
+    });
+  },
+
+  // 2. Método Principal: Obtener el Token ----------------------------
+  registerForPushNotificationsAsync: async (): Promise<string | null> => {
+    let token;
+
+    // A. Configuración específica para ANDROID 🤖
+    if (Platform.OS === 'android') {
+      await Notifications.setNotificationChannelAsync('default', {
+        name: 'default', // Nombre interno del canal
+        importance: Notifications.AndroidImportance.MAX, // Máxima prioridad (suena y vibra)
+        vibrationPattern: [0, 250, 250, 250], // Patrón de vibración
+        lightColor: '#FF231F7C', // Color del LED de notificación
+      });
+    }
+
+    // B. Verificación de Dispositivo Físico 📱
+    // (Los simuladores NO tienen Push Token, fallarán si no verificamos esto)
+    if (Device.isDevice) {
+      
+      // C. Gestión de Permisos (La parte aburrida pero vital) 👮
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+
+      // Si no tenemos permiso aún, lo pedimos amablemente
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+
+      // Si el usuario dijo que NO... nos rendimos :(
+      if (finalStatus !== 'granted') {
+        console.log('¡Permiso denegado por el usuario!');
+        return null;
+      }
+
+      // D. ¡Éxito! Obtenemos el Token 🎟️
+      // El projectId es vital para EAS Build
+      token = (await Notifications.getExpoPushTokenAsync({
+        projectId: Constants.expoConfig?.extra?.eas?.projectId,
+      })).data;
+      
+    } else {
+      console.log('⚠️ Debes usar un dispositivo físico para probar Push Notifications');
+    }
+
+    return token || null;
+```
+<CardGrid>
+  <Card title="Canales Android" icon="phone">
+    Desde Android 8.0, las notificaciones deben pertenecer a un <Highlight>Canal</Highlight>. Esto permite al usuario silenciar tipos específicos de notificaciones (ej: "Marketing" vs "Envíos") desde los ajustes del sistema.
+  </Card>
+  <Card title="Simuladores" icon="laptop">
+    Esta función devolverá <Highlight>null</Highlight> en Simuladores de iOS/Android. Siempre prueba en un dispositivo real o usa la herramienta de tests de Expo.
+  </Card>
+</CardGrid>
