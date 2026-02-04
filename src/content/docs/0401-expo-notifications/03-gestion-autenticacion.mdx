@@ -6,6 +6,7 @@ description: Contexto de autenticación para vincular dispositivos con usuarios.
 import ZoomImage from '../../../components/ZoomImage.astro';
 import missingLinkImg from '../../../assets/napkin_missing_link.png';
 import GuideStep from '../../../components/GuideStep.astro';
+import Highlight from '../../../components/Highlight.astro';
 
 <GuideStep />
 
@@ -19,9 +20,9 @@ Para los servidores de Apple o Google, un teléfono es solo un código anónimo:
 
 Si guardamos ese token solo, no sabremos a quién pertenece. Aquí es donde entra la **Sesión**. La sesión contiene el `user_id` (UUID) de tu base de datos.
 
-> **Token (Dispositivo) + Sesión (Usuario) = Notificación Personalizada ✅**
+> <Highlight variant="blue">Token (Dispositivo)</Highlight> + <Highlight variant="purple">Sesión (Usuario)</Highlight> = <Highlight variant="green">Notificación Personalizada ✅</Highlight>
 
-Para lograr esto, no podemos estar llamando a la API en cada pantalla. Crearemos un **Contexto de Autenticación** para tener el usuario disponible en toda la app.
+Para lograr esto, no podemos estar llamando a la API en cada pantalla. Crearemos un <Highlight variant="primary">Contexto de Autenticación</Highlight> para tener el usuario disponible en toda la app.
 
 ## AuthProvider Component
 

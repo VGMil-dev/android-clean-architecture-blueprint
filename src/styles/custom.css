@@ -9,6 +9,11 @@
     /* Typography */
     --sl-font-system-sans: 'JetBrains Mono', monospace;
     --sl-font-mono: 'JetBrains Mono', monospace;
+
+    /* Colors */
+    --purple: #c084fc;
+    --green: #4ade80;
+    --blue: #60a5fa;
 }
 
 body,

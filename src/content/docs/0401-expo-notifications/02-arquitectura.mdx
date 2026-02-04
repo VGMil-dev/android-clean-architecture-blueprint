@@ -5,21 +5,22 @@ description: Estructura Feature-Based Architecture relajada para escalabilidad.
 
 import TechStack from '../../../components/TechStack.astro';
 import GuideStep from '../../../components/GuideStep.astro';
+import Highlight from '../../../components/Highlight.astro';
 import ZoomImage from '../../../components/ZoomImage.astro';
 import pushArchImg from '../../../assets/napkin_push_architecture.png';
 
 <GuideStep />
 
-El código desordenado es el enemigo de la escalabilidad. Usaremos una estructura basada en **Feature-Based Architecture** relajada, separando claramente nuestra lógica de negocio, UI y servicios externos.
+El código desordenado es el enemigo de la escalabilidad. Usaremos una estructura basada en <Highlight>Feature-Based Architecture</Highlight> relajada, separando claramente nuestra lógica de negocio, UI y servicios externos.
 
 ## Diagrama de Flujo de Datos
 
 <ZoomImage src={pushArchImg} alt="Arquitectura Push Notification" />
 
 ### Arquitectura Push Notification
-*   **User App**: Tu aplicación Expo. Contiene `google-services.json` (Android) para autenticarse con FCM al iniciar.
-*   **Supabase**: Almacena los tokens de los usuarios y dispara eventos desde la Base de Datos (Postgres Triggers/Edge Functions).
-*   **Expo Push Service**: Intermediario que facilita el envío eludiendo la complejidad de conectarse directo a Apple/Google.
+*   <Highlight>User App</Highlight>: Tu aplicación Expo. Contiene `google-services.json` (Android) para autenticarse con FCM al iniciar.
+*   <Highlight>Supabase</Highlight>: Almacena los tokens de los usuarios y dispara eventos desde la Base de Datos (Postgres Triggers/Edge Functions).
+*   <Highlight>Expo Push Service</Highlight>: Intermediario que facilita el envío eludiendo la complejidad de conectarse directo a Apple/Google.
 
 ### Credenciales & Config
 *   `eas.json`: Define perfiles de build (dev/prod).
