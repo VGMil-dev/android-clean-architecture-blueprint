@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 :root {
     --sl-color-accent-low: #4d3e20;
     --sl-color-accent: #cfa34b;

@@ -2,6 +2,8 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
+import tailwindcss from '@tailwindcss/vite';
+
 // https://astro.build/config
 export default defineConfig({
 	integrations: [
@@ -21,9 +23,11 @@ export default defineConfig({
 			sidebar: [
 				{
 					label: 'Guides',
-					items: [
-						{ label: 'Notificaciones Push', slug: 'guides/notificaciones-push' },
-					],
+					autogenerate: { directory: 'guides' },
+				},
+				{
+					label: 'Expo Notifications',
+					autogenerate: { directory: '0401-expo-notifications' },
 				},
 				{
 					label: 'Reference',
@@ -32,4 +36,8 @@ export default defineConfig({
 			],
 		}),
 	],
+
+	vite: {
+		plugins: [tailwindcss()],
+	},
 });
