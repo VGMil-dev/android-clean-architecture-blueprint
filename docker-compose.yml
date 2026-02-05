@@ -1,0 +1,7 @@
+services:
+  repomovil:
+    build: .
+    container_name: repomovil
+    restart: always
+    ports:
+      - "8081:80"
