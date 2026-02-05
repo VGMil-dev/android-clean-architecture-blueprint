@@ -43,8 +43,13 @@ export default defineConfig({
 								{ slug: '0401-expo-notifications/04c-implementacion-global' },
 							],
 						},
-						{ slug: '0401-expo-notifications/05-credenciales-android' },
-						{ slug: '0401-expo-notifications/06-eas-build' },
+						{
+							label: 'Despliegue',
+							items: [
+								{ slug: '0401-expo-notifications/05-credenciales-android' },
+								{ slug: '0401-expo-notifications/06-eas-build' },
+							],
+						},
 						{ slug: '0401-expo-notifications/07-troubleshooting' },
 					],
 				},
