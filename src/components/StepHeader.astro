@@ -1,0 +1,31 @@
+---
+interface Props {
+    number: string | number;
+    title: string;
+    variant?: "purple" | "pink" | "cyan" | "green" | "orange" | "yellow";
+}
+
+const { number, title, variant = "purple" } = Astro.props;
+
+const colors = {
+    purple: { bg: "bg-purple-500", text: "text-purple-400" },
+    pink: { bg: "bg-pink-500", text: "text-pink-400" },
+    cyan: { bg: "bg-cyan-500", text: "text-cyan-400" },
+    green: { bg: "bg-green-500", text: "text-green-400" },
+    orange: { bg: "bg-orange-500", text: "text-orange-400" },
+    yellow: { bg: "bg-yellow-500", text: "text-yellow-400" },
+};
+
+const color = colors[variant] || colors.purple;
+---
+
+<h2
+    class={`text-2xl font-bold ${color.text} mt-12 mb-4 flex items-center gap-2`}
+>
+    <span
+        class={`${color.bg} text-white w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3 shadow-lg`}
+    >
+        {number}
+    </span>
+    {title}
+</h2>

@@ -1,0 +1,114 @@
+---
+title: EAS Build
+description: Generación de ejecutables (APK/AAB) con credenciales en la nube.
+---
+
+import { Card, CardGrid, Tabs, TabItem, Steps } from '@astrojs/starlight/components';
+import GuideStep from '@components/GuideStep.astro';
+import Highlight from '@components/Highlight.astro';
+import StepHeader from '@components/StepHeader.astro';
+import ZoomImage from '@components/ZoomImage.astro';
+
+import easJsonImg from '@assets/guide/napkin_eas_json_structure.png';
+import buildSuccessImg from '@assets/guide/napkin_eas_build_success.png';
+import pushToolImg from '@assets/guide/napkin_expo_push_tool.png';
+
+<GuideStep />
+
+Una vez configuradas las credenciales, estamos listos para construir la aplicación. EAS Build tomará nuestro código Javascript y las credenciales de Firebase que acabamos de subir, y generará un binario nativo (.apk para probar o .aab para la tienda).
+
+<StepHeader number="1" title="Perfiles de Construcción" variant="purple" />
+
+En `eas.json` (que se crea con `eas build:configure`), definimos cómo queremos construir la app.
+
+```json title="eas.json"
+{
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    // ...
+    "production": {
+      "distribution": "store"
+    }
+  }
+}
+```
+
+<ZoomImage src={easJsonImg} alt="Estructura de perfiles de EAS Build" />
+
+<CardGrid>
+  <Card title="Development" icon="code">
+    Crea una versión personalizada de "Expo Go". Te permite probar **librerías nativas** (como notificaciones) mientras sigues usando hot-reload.
+  </Card>
+  <Card title="Preview" icon="rocket">
+    Genera un **APK** instalable. Ideal para compartir con el equipo o testers manuales. No tiene hot-reload.
+  </Card>
+</CardGrid>
+
+<StepHeader number="2" title="Ejecutar el Build" variant="green" />
+
+Elige tu aventura. ¿Quieres probar mientras desarrollas o ver el resultado final?
+
+<Tabs>
+  <TabItem label="Development (Recomendado)">
+    Para probar notificaciones rápidamente en tu dispositivo físico:
+
+    ```bash
+    eas build --profile development --platform android
+    ```
+    
+    <Steps>
+
+    1. Instala el APK resultante en tu móvil.
+    2. Inicia el servidor de desarrollo: `npx expo start --dev-client`.
+    3. Escanea el QR desde la app que acabas de instalar.
+    
+    </Steps>
+
+    <ZoomImage src={buildSuccessImg} alt="Build Exitoso y Código QR" />
+  </TabItem>
+
+  <TabItem label="Preview / APK">
+    Para generar un instalable standalone:
+
+    ```bash
+    eas build --profile preview --platform android
+    ```
+
+    Espera a que termine y descarga el APK desde el enlace que te da la terminal.
+  </TabItem>
+
+  <TabItem label="Local Build">
+    Si no quieres esperar la cola gratuita de EAS y tienes un PC potente con Android Studio:
+
+    ```bash
+    eas build --profile development --platform android --local
+    ```
+  </TabItem>
+</Tabs>
+
+<StepHeader number="3" title="Probando Notificaciones" variant="cyan" />
+
+Una vez tengas la **Development Build** instalada:
+
+<Steps>
+
+1.  Abre la app.
+2.  Obtén tu **Expo Push Token** (deberías verlo en consola o UI si seguiste el paso 4).
+3.  Ve a la [Herramienta de Push de Expo](https://expo.dev/notifications).
+4.  Pega tu token y envía una prueba.
+
+</Steps>
+
+<ZoomImage src={pushToolImg} alt="Herramienta de notificaciones de Expo" />
+
+:::success[¡Éxito!]
+Si ves la notificación en tu barra de estado, ¡felicidades! Has configurado correctamente todo el pipeline de FCM y Expo.
+:::
+
+<Card title="📚 Referencias Oficiales" icon="open-book">
+  - [EAS Build: Intro](https://docs.expo.dev/build/introduction/)
+  - [EAS Internal Distribution](https://docs.expo.dev/build/internal-distribution/)
+</Card>

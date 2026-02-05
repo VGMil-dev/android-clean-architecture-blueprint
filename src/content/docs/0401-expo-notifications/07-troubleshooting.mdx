@@ -1,0 +1,108 @@
+---
+title: Troubleshooting EAS Build
+description: Guía de supervivencia para errores comunes y cómo investigarlos.
+---
+
+import { Card, CardGrid, Steps } from '@astrojs/starlight/components';
+import GuideStep from '@components/GuideStep.astro';
+import Highlight from '@components/Highlight.astro';
+import StepHeader from '@components/StepHeader.astro';
+import ZoomImage from '@components/ZoomImage.astro';
+
+import detectiveImg from '@assets/guide/napkin_debug_detective.png';
+import searchTipsImg from '@assets/guide/napkin_search_tips.png';
+
+<GuideStep />
+
+A veces las cosas se rompen. Es parte del desarrollo. Cuando veas un error rojo en tu terminal o en el dashboard de Expo, no entres en pánico. Usa esta guía para convertirte en un detective de errores.
+
+<StepHeader number="1" title="El Arte de Buscar Errores" variant="orange" />
+
+La mayoría de los errores de build son crípticos, pero contienen la clave de su propia solución. El truco está en saber **qué ignorar** y **qué copiar**.
+
+<ZoomImage src={searchTipsImg} alt="Cómo buscar errores de programación efectivamente" />
+
+<CardGrid>
+  <Card title="Mal término de búsqueda" icon="close">
+    `Error building app /Users/miusuario/proyectos/app/android/gradle...`
+    
+    *Demasiado específico a tu máquina. Google no conoce tu carpeta de usuario.*
+  </Card>
+  <Card title="Buen término de búsqueda" icon="approve-check-circle">
+    `expo build android gradle failure :app:mergeReleaseResources`
+    
+    *Céntrate en el nombre de la tarea que falló y el código de error.*
+  </Card>
+</CardGrid>
+
+<StepHeader number="2" title="Galería de Horrores (Errores Comunes)" variant="red" />
+
+Aquí tienes los sospechosos habituales. Si te encuentras uno, ¡tienes suerte! Ya sabemos cómo arreglarlo.
+
+<CardGrid stagger>
+  <Card title="Quejas de Gradle (Java Version)" icon="laptop">
+    :::danger[El Síntoma]
+    Errores mencionando `Java heap space`, `Unsupported class file major version` o `Could not find tools.jar`.
+    :::
+    
+    **La Causa:**
+    `eas build` usa una imagen de servidor (Ubuntu) por defecto que quizá tiene una versión de Java distinta a la de tu PC.
+
+    **La Solución:**
+    Fuerza la imagen "latest" en tu `eas.json` para asegurarte de tener herramientas modernas:
+
+    ```json
+    "android": {
+      "image": "latest"
+    }
+    ```
+  </Card>
+
+  <Card title="Keystore Mismatch" icon="seti:lock">
+    :::danger[El Síntoma]
+    `The uploaded certificate does not match the old certificate`.
+    :::
+
+    **La Causa:**
+    Intentas subir una actualización a la Play Store firmada con una llave distinta a la versión anterior. Google rechaza esto por seguridad.
+
+    **La Solución:**
+    Si perdiste la `jks` original y la app ya es pública, **es grave**. Debes contactar a soporte de Google Play.
+    
+    :::tip[Consejo]
+    ¡Haz backup de tus credenciales con `eas credentials`!
+    :::
+  </Card>
+
+  <Card title="Queue / No Space" icon="warning">
+    :::warning[El Síntoma]
+    `No space left on device` o tiempos de espera de +30 minutos.
+    :::
+
+    **La Causa:**
+    El plan **Free** de Expo tiene recursos limitados y colas compartidas. A veces los `node_modules` gigantes llenan el disco del builder.
+
+    **La Solución:**
+    Usa `eas build --local` si tienes un PC potente, o optimiza tus assets.
+  </Card>
+</CardGrid>
+
+<StepHeader number="3" title="Analizando los Logs" variant="purple" />
+
+<ZoomImage src={detectiveImg} alt="Investigando logs de EAS" />
+
+Cuando el build falla, EAS te da un enlace a una página web. No cierres la pestaña, ¡úsala!
+
+<Steps>
+
+1.  Abre el enlace del build fallido.
+2.  Busca la sección **Run gradlew** (Android) o **Run fastlane** (iOS).
+3.  Están colapsadas por defecto. **Expándelas**.
+4.  Haz scroll buscando texto en color <Highlight variant="red">ROJO</Highlight>.
+5.  Copia **solo** la línea del error rojo en Google (o pregúntale a ChatGPT).
+
+</Steps>
+
+:::tip[Expo Doctor]
+Antes de enviar un build, ejecuta `npx expo-doctor` en tu terminal local. Te avisará de incompatibilidades de versiones antes de que gastes tiempo en la nube.
+:::
