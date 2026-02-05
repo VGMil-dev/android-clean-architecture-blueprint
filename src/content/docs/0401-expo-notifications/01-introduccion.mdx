@@ -3,11 +3,12 @@ title: Introduccion
 description: Guía completa para implementar notificaciones push con Expo, Supabase y triggers en base de datos.
 ---
 
+import { Card, CardGrid } from '@astrojs/starlight/components';
 import TechStack from '@components/TechStack.astro';
 import GuideStep from '@components/GuideStep.astro';
 import Highlight from '@components/Highlight.astro';
 
-<GuideStep/>
+<GuideStep total={7}/>
 
 <TechStack techs={[
   { tecnologia: 'Expo Router', color: 'note' },
@@ -17,13 +18,24 @@ import Highlight from '@components/Highlight.astro';
 
 :::tip[Objetivo]
 Esta guía te llevará paso a paso en la construcción de un sistema robusto de notificaciones. No solo aprenderás a "hacer que funcione", sino a arquitecturarlo como un <Highlight>Senior Engineer</Highlight>.
+:::
 
 Al final de este viaje, tendrás:
-* Aplicación móvil moderna con <Highlight>Expo Router</Highlight>.
-* Gestión de sesiones e identidad con <Highlight>Supabase Auth</Highlight>.
-* Base de datos PostgreSQL real con <Highlight>Triggers</Highlight> automatizados.
-* Experiencia de usuario premium con <Highlight>Animaciones</Highlight> y feedback visual.
-:::
+
+<CardGrid stagger>
+  <Card title="Arquitectura Moderna" icon="rocket">
+    Aplicación móvil robuta construida con <Highlight>Expo Router</Highlight>.
+  </Card>
+  <Card title="Seguridad Total" icon="seti:lock">
+    Gestión de sesiones e identidad con <Highlight>Supabase Auth</Highlight>.
+  </Card>
+  <Card title="Potencia de Datos" icon="seti:db">
+    Base de datos PostgreSQL real con <Highlight>Triggers</Highlight> automatizados.
+  </Card>
+  <Card title="UX Premium" icon="star">
+    Experiencia de usuario fluida con <Highlight>Animaciones</Highlight> y feedback visual.
+  </Card>
+</CardGrid>
 
 ## Requisitos Previos
 
