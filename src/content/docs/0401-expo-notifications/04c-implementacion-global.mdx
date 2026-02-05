@@ -1,0 +1,63 @@
+---
+title: 04c. Implementación Global
+description: Cómo integrar la lógica de notificaciones en el Layout principal de la aplicación.
+---
+import { Card, CardGrid, Steps } from '@astrojs/starlight/components';
+import GuideStep from '@components/GuideStep.astro';
+import Highlight from '@components/Highlight.astro';
+import ZoomImage from '@components/ZoomImage.astro';
+import napkinConnection from '../../../assets/napkin_hook_adapter_connection.png';
+
+<GuideStep />
+
+¡Lo tenemos todo! El <Highlight variant="purple">Adaptador</Highlight> (infraestructura) y el <Highlight variant="blue">Hook</Highlight> (lógica).
+Ahora solo falta **enchufarlo** para que todo el sistema cobre vida.
+
+<ZoomImage src={napkinConnection} alt="Conexión del Hook con el Adaptador" />
+
+## ¿Dónde lo colocamos?
+
+La mejor práctica es colocar esto en el nivel más alto posible de tu aplicación autenticada, típicamente en tu <Highlight>Layout Principal</Highlight>.
+
+### Implementación
+
+```tsx {7-9}
+// src/app/_layout.tsx
+import { usePushNotifications } from "@/lib/modules/notifications/usePushNotifications";
+import { AuthProvider, useAuth } from "@/lib/modules/auth/AuthProvider";
+import { Stack } from "expo-router";
+
+function AuthLayout() {
+  const { session } = useAuth();
+  const userId = session?.user.id;
+  usePushNotifications(userId); // <--- 🔌 Hook conectado aquí
+  return <Stack />;
+}
+
+
+export default function RootLayout() {
+  return (
+    <AuthProvider>
+      <AuthLayout />
+    </AuthProvider>
+  );
+}
+```
+
+<Card title="¿Por qué en el Layout?" icon="star">
+  Al ponerlo en el `Layout`, garantizamos que el registro se intente ejecutar <Highlight variant="green">apenas la aplicación carga</Highlight>, sin que el usuario tenga que ir a una pantalla de "Configuración".
+  
+  Es una experiencia transparente (**Set and Forget**).
+</Card>
+
+
+### Flujo de Ejecución
+
+<Steps>
+
+1. **App Inicia**: Se monta el `_layout.tsx`.
+2. **Auth Provider**: Verifica y carga la sesión del usuario.
+3. **Hook**: Se llama a `usePushNotifications(userId)` con el ID del usuario.
+4. **Registro**: El Hook llama a Expo, obtiene el Token y lo guarda en **Supabase**.
+
+</Steps>

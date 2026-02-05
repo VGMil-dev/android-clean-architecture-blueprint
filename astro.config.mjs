@@ -40,6 +40,7 @@ export default defineConfig({
 								},
 								{ slug: '0401-expo-notifications/04a-el-adaptador' },
 								{ slug: '0401-expo-notifications/04b-el-hook' },
+								{ slug: '0401-expo-notifications/04c-implementacion-global' },
 							],
 						},
 					],
