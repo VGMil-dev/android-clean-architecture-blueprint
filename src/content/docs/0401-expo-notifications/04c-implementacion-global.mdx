@@ -1,36 +1,58 @@
 ---
-title: Implementación Global
-description: Cómo integrar la lógica de notificaciones en el Layout principal de la aplicación.
+title: Protección de Rutas (Auth)
+description: Cómo implementar un sistema de protección de rutas basado en sesión usando expo-router.
 ---
-import { Card, CardGrid, Steps } from '@astrojs/starlight/components';
+import { Card, Steps } from '@astrojs/starlight/components';
 import GuideStep from '@components/GuideStep.astro';
 import Highlight from '@components/Highlight.astro';
 import ZoomImage from '@components/ZoomImage.astro';
-import napkinConnection from '../../../assets/napkin_hook_adapter_connection.png';
+import napkinAuth from '@assets/napkin_auth_protection.png';
 
 <GuideStep />
 
-¡Lo tenemos todo! El <Highlight variant="purple">Adaptador</Highlight> (infraestructura) y el <Highlight variant="blue">Hook</Highlight> (lógica).
-Ahora solo falta **enchufarlo** para que todo el sistema cobre vida.
+Una app segura nunca debe dejar que un usuario no autenticado vea pantallas privadas.
+Usaremos `expo-router` y nuestro `useAuth` para crear un sistema de protección robusto.
 
-<ZoomImage src={napkinConnection} alt="Conexión del Hook con el Adaptador" />
+<ZoomImage src={napkinAuth} alt="Diagrama de Flujo de Protección de Rutas" />
 
-## ¿Dónde lo colocamos?
+## El Guardián del Layout
 
-La mejor práctica es colocar esto en el nivel más alto posible de tu aplicación autenticada, típicamente en tu <Highlight>Layout Principal</Highlight>.
+Modificaremos nuestro `src/app/_layout.tsx` para que actúe como un "Portero". Si no tienes sesión, te manda al login. Si ya tienes sesión y tratas de ir al login, te manda al home.
 
 ### Implementación
 
-```tsx {7-9}
+```tsx {16-29}
 // src/app/_layout.tsx
 import { usePushNotifications } from "@/lib/modules/notifications/usePushNotifications";
 import { AuthProvider, useAuth } from "@/lib/modules/auth/AuthProvider";
-import { Stack } from "expo-router";
+import { Stack, useRouter, useSegments } from "expo-router";
+import { useEffect } from "react";
 
 function AuthLayout() {
-  const { session } = useAuth();
+  const { session, loading } = useAuth();
+  const segments = useSegments();
+  const router = useRouter();
+
+  // 1. Iniciamos el sistema de notificaciones
   const userId = session?.user.id;
-  usePushNotifications(userId); // <--- 🔌 Hook conectado aquí
+  usePushNotifications(userId);
+
+  // 2. Efecto de Protección de Rutas
+  useEffect(() => {
+    if (loading) return; // Esperamos a saber si hay sesión o no
+
+    // Verificamos si estamos en el grupo de rutas de autenticación (login/register)
+    const inAuthGroup = segments[0] === '(auth)';
+
+    if (!session && !inAuthGroup) {
+      // ⛔ Si NO hay usuario y NO estamos en login -> Mandar a Login
+      router.replace('/(auth)/login');
+    } else if (session && inAuthGroup) {
+      // ✅ Si HAY usuario y estamos en login -> Mandar al Home
+      router.replace('/');
+    }
+  }, [session, loading, segments]);
+
   return <Stack />;
 }
 
@@ -44,20 +66,9 @@ export default function RootLayout() {
 }
 ```
 
-<Card title="¿Por qué en el Layout?" icon="star">
-  Al ponerlo en el `Layout`, garantizamos que el registro se intente ejecutar <Highlight variant="green">apenas la aplicación carga</Highlight>, sin que el usuario tenga que ir a una pantalla de "Configuración".
-  
-  Es una experiencia transparente (**Set and Forget**).
+<Card title="Explicación de segments" icon="information">
+  `useSegments()` nos devuelve un array con la ruta actual.
+  Por ejemplo, si el usuario está en `/app/(auth)/login`, los segmentos serían `['(auth)', 'login']`.
+
+  Esto nos permite saber "dónde está" el usuario antes de decidir si redirigirlo o no, evitando bucles infinitos de redirección.
 </Card>
-
-
-### Flujo de Ejecución
-
-<Steps>
-
-1. **App Inicia**: Se monta el `_layout.tsx`.
-2. **Auth Provider**: Verifica y carga la sesión del usuario.
-3. **Hook**: Se llama a `usePushNotifications(userId)` con el ID del usuario.
-4. **Registro**: El Hook llama a Expo, obtiene el Token y lo guarda en **Supabase**.
-
-</Steps>
