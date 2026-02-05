@@ -1,0 +1,87 @@
+---
+title: 04b. El Hook (Lógica de Negocio)
+description: Lógica para orquestar el registro de notificaciones y persistencia en Supabase.
+---
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import GuideStep from '@components/GuideStep.astro';
+import Highlight from '@components/Highlight.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+<GuideStep />
+
+Ya tenemos el "músculo" (Adaptador). Ahora necesitamos el "cerebro".
+Este Hook se encargará de **orquestar** el registro: llama al adaptador y guarda el resultado en Supabase.
+
+### La Lógica del Hook
+
+```typescript {9, 16-17, 21-29, 38-49}
+// src/lib/modules/notifications/usePushNotifications.ts
+import { useEffect } from 'react';
+import { Platform } from 'react-native';
+import { supabase } from '../../core/supabase/client.supabase';
+import { NotificationAdapter } from '../../core/notifications/notification.adapter';
+
+// 1. Setup Inicial Fuera del componente
+// Esto configura los listeners una sola vez al cargar el archivo
+NotificationAdapter.setup();
+
+export const usePushNotifications = (userId?: string) => {
+  // 2. Efecto Principal
+  // Se ejecuta cuando el 'userId' cambia (login/logout)
+  useEffect(() => {
+    
+    // A. Cláusula de Guardia 🛡️
+    // Si no hay usuario logueado, no hacemos nada.
+    if (!userId) return;
+
+    const register = async () => {
+      // B. Llamada al Adaptador 🔌
+      // Todo el trabajo sucio de permisos ocurre aquí dentro
+      const token = await NotificationAdapter.registerForPushNotificationsAsync();
+      
+      if (token) {
+        console.log('Token obtenido:', token);
+        // C. Persistencia 💾
+        // Si tenemos token, lo guardamos en la nube
+        await saveTokenToDatabase(token, userId);
+      }
+    };
+
+    register();
+    
+  }, [userId]); // <--- Array de dependencias: se re-ejecuta si userId cambia
+};
+
+// 3. Función Auxiliar de Supabase ⚡
+async function saveTokenToDatabase(token: string, userId: string) {
+  // Usamos 'upsert' (Insert or Update)
+  // Si el token ya existe, actualiza el timestamp. Si no, lo crea.
+  const { error } = await supabase
+    .from('devices')
+    .upsert({ 
+      user_id: userId,
+      token: token,
+      platform: Platform.OS, // 'ios' o 'android'
+      last_used_at: new Date().toISOString() // Importante para saber dispositivos activos
+    }, { onConflict: 'token' }); 
+    // ^ 'onConflict': Si el token ya existe en la DB, no dupliques, fusiona.
+
+  if (error) {
+    console.error('Error guardando device:', error);
+  } else {
+    console.log('Dispositivo registrado en Supabase ✅');
+  }
+}
+```
+
+
+<Steps>
+
+1. El componente `_layout.tsx` monta y llama a `usePushNotifications(session?.user.id)`.
+2. Si hay sesión, el Hook llama al **Adaptador**.
+3. El Adaptador pide permisos al usuario (si no los tiene).
+4. Si acepta, Expo devuelve el `Token`.
+5. El Hook toma ese Token y lo guarda en la tabla `devices` de Supabase.
+6. ¡Listo! El backend ya puede enviar notificaciones a este usuario.
+
+</Steps>
