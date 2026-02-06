@@ -7,6 +7,7 @@ import TechStack from '@components/TechStack.astro';
 import GuideStep from '@components/GuideStep.astro';
 import Highlight from '@components/Highlight.astro';
 import ZoomImage from '@components/ZoomImage.astro';
+import ArchitectureDiagram from '@components/react/ArchitectureDiagram';
 import pushArchImg from '@assets/napkin_push_architecture.png';
 
 <GuideStep total={7}/>
@@ -15,7 +16,14 @@ El código desordenado es el enemigo de la escalabilidad. Usaremos una estructur
 
 ## Diagrama de Flujo de Datos
 
-<ZoomImage src={pushArchImg} alt="Arquitectura Push Notification" />
+<div className="my-8 not-content">
+  <ArchitectureDiagram client:visible />
+</div>
+
+<details>
+  <summary>Ver diagrama estático</summary>
+  <ZoomImage src={pushArchImg} alt="Arquitectura Push Notification" />
+</details>
 
 ### Arquitectura Push Notification
 *   <Highlight>User App</Highlight>: Tu aplicación Expo. Contiene `google-services.json` (Android) para autenticarse con FCM al iniciar.
@@ -116,7 +124,7 @@ const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    storage: storageAdapter, // ¡Magia! ✨ Funciona en Web y App
+    storage: storageAdapter, // ¡Magia! Funciona en Web y App
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: false,

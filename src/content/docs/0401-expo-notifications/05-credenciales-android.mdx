@@ -22,6 +22,8 @@ Para que las notificaciones lleguen a dispositivos Android reales en producción
 
 Así es como se conectan las piezas: Tu App, Firebase y los servidores de Expo (EAS).
 
+import { LucideItem } from '@components/react/LucideItem';
+
 <ZoomImage src={architectureImg} alt="Diagrama de flujo de credenciales Android (Firebase -> App / Cloud -> EAS)" />
 
 :::caution[Requisito Previo]
@@ -73,13 +75,16 @@ Cambia `usuario` por tu nombre o marca. Este ID será permanente una vez subas l
 │   ├── 📱 app/
 │   └── 🧱 components/
 ├── ⚙️ app.json
-├── 🤖 google-services.json          <--- ¡Aquí! 
+├── <LucideItem name="Settings" size={14} client:load>google-services.json          <--- ¡Aquí! </LucideItem>
 ├── 🔧 babel.config.js
 ├── 📦 package.json
 └── 📘 tsconfig.json
 ```
 
-<Card title="⚠️ Seguridad en Repositorios" icon="warning">
+<Card title="Seguridad en Repositorios" icon="warning">
+  <div slot="title" className="flex items-center gap-2">
+    <LucideItem name="AlertTriangle" color="var(--sl-color-orange)" client:load>Seguridad en Repositorios</LucideItem>
+  </div>
   Si tu repositorio es público, **NO SUBAS** este archivo. Agrégalo a tu `.gitignore`.
   
   Aunque contiene identificadores públicos, es una buena práctica de higiene mantenerlo fuera del control de versiones si es posible, o usar secretos de EAS si trabajas en equipo.

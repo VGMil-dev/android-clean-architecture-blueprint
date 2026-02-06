@@ -8,6 +8,8 @@ import missingLinkImg from '@assets/napkin_missing_link.png';
 import GuideStep from '@components/GuideStep.astro';
 import Highlight from '@components/Highlight.astro';
 
+import { LucideItem } from '@components/react/LucideItem';
+
 <GuideStep total={7}/>
 
 Las notificaciones push son personales. Necesitamos saber a quién enviárselas.
@@ -20,7 +22,7 @@ Para los servidores de Apple o Google, un teléfono es solo un código anónimo:
 
 Si guardamos ese token solo, no sabremos a quién pertenece. Aquí es donde entra la **Sesión**. La sesión contiene el `user_id` (UUID) de tu base de datos.
 
-> <Highlight variant="blue">Token (Dispositivo)</Highlight> + <Highlight variant="purple">Sesión (Usuario)</Highlight> = <Highlight variant="green">Notificación Personalizada ✅</Highlight>
+> <Highlight variant="blue">Token (Dispositivo)</Highlight> + <Highlight variant="purple">Sesión (Usuario)</Highlight> = <Highlight variant="green">Notificación Personalizada <LucideItem name="CheckCircle" client:load /></Highlight>
 
 Para lograr esto, no podemos estar llamando a la API en cada pantalla. Crearemos un <Highlight variant="primary">Contexto de Autenticación</Highlight> para tener el usuario disponible en toda la app.
 

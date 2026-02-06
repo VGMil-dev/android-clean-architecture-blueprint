@@ -6,16 +6,18 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 import GuideStep from '@components/GuideStep.astro';
 import Highlight from '@components/Highlight.astro';
 
+import { LucideItem } from '@components/react/LucideItem';
+
 <GuideStep total={7}/>
 
 Antes de pensar en lógica de negocio, necesitamos una pieza de código "sucia" pero necesaria: la que habla con Apple (APNs) y Google (FCM).
 
 ## ¿Qué hace este archivo?
 
-- 🔧 <Highlight>Configura</Highlight> cómo se comportan las notificaciones (sonido, alertas).
-- 🤖 <Highlight variant="purple">Configura canales</Highlight> de Android (vibración, color de LED).
-- 👮‍♀️ <Highlight variant="blue">Gestiona los Permisos</Highlight> del Sistema Operativo.
-- 🎟️ <Highlight variant="green">Obtiene el Token</Highlight> único de Expo.
+- <LucideItem name="Settings" color="var(--sl-color-accent-high)" client:load><Highlight>Configura</Highlight> cómo se comportan las notificaciones (sonido, alertas).</LucideItem>
+- <LucideItem name="Cpu" color="var(--sl-color-purple)" client:load><Highlight variant="purple">Configura canales</Highlight> de Android (vibración, color de LED).</LucideItem>
+- <LucideItem name="Shield" color="var(--sl-color-blue)" client:load><Highlight variant="blue">Gestiona los Permisos</Highlight> del Sistema Operativo.</LucideItem>
+- <LucideItem name="Ticket" color="var(--sl-color-green)" client:load><Highlight variant="green">Obtiene el Token</Highlight> único de Expo.</LucideItem>
 
 ## Implementación
 
@@ -60,7 +62,7 @@ export const NotificationAdapter = {
   registerForPushNotificationsAsync: async (): Promise<string | null> => {
     let token;
 
-    // A. Configuración específica para ANDROID 🤖
+    // A. Configuración específica para ANDROID
     if (Platform.OS === 'android') {
       await Notifications.setNotificationChannelAsync('default', {
         name: 'default', // Nombre interno del canal
@@ -70,11 +72,11 @@ export const NotificationAdapter = {
       });
     }
 
-    // B. Verificación de Dispositivo Físico 📱
+    // B. Verificación de Dispositivo Físico
     // (Los simuladores NO tienen Push Token, fallarán si no verificamos esto)
     if (Device.isDevice) {
       
-      // C. Gestión de Permisos (La parte aburrida pero vital) 👮
+      // C. Gestión de Permisos (La parte aburrida pero vital)
       const { status: existingStatus } = await Notifications.getPermissionsAsync();
       let finalStatus = existingStatus;
 
@@ -90,14 +92,14 @@ export const NotificationAdapter = {
         return null;
       }
 
-      // D. ¡Éxito! Obtenemos el Token 🎟️
+      // D. ¡Éxito! Obtenemos el Token
       // El projectId es vital para EAS Build
       token = (await Notifications.getExpoPushTokenAsync({
         projectId: Constants.expoConfig?.extra?.eas?.projectId,
       })).data;
       
     } else {
-      console.log('⚠️ Debes usar un dispositivo físico para probar Push Notifications');
+      console.log('Debes usar un dispositivo físico para probar Push Notifications');
     }
 
     return token || null;

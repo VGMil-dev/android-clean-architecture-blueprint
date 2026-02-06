@@ -8,6 +8,8 @@ import TechStack from '@components/TechStack.astro';
 import GuideStep from '@components/GuideStep.astro';
 import Highlight from '@components/Highlight.astro';
 
+import { LucideItem } from '@components/react/LucideItem';
+
 <GuideStep total={7}/>
 
 <TechStack techs={[
@@ -39,6 +41,6 @@ Al final de este viaje, tendrás:
 
 ## Requisitos Previos
 
-*   ✅ **Node.js v18+**
-*   ✅ **Cuenta en Supabase y Expo.dev**
-*   ✅ **Dispositivo Físico o Emulador Configurado**
+* <LucideItem name="CheckCircle" color="var(--sl-color-green)" client:load>**Node.js v18+**</LucideItem>
+* <LucideItem name="CheckCircle" color="var(--sl-color-green)" client:load>**Cuenta en Supabase y Expo.dev**</LucideItem>
+* <LucideItem name="CheckCircle" color="var(--sl-color-green)" client:load>**Dispositivo Físico o Emulador Configurado**</LucideItem>

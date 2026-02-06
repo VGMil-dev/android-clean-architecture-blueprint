@@ -6,6 +6,8 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 import GuideStep from '@components/GuideStep.astro';
 import Highlight from '@components/Highlight.astro';
 
+import { LucideItem } from '@components/react/LucideItem';
+
 <GuideStep total={7}/>
 
 Antes de escribir una sola línea de código complejo, necesitamos preparar nuestro arsenal. Vamos a instalar las librerías oficiales que nos permitirán comunicarnos con el sistema operativo y nuestro backend.
@@ -30,7 +32,7 @@ npx expo install @supabase/supabase-js @react-native-async-storage/async-storage
         Cliente de DB y Auth.
     </Card>
     <Card title="AsyncStorage" icon="document">
-        Persistencia local segura para Móvil. ⚠️ ¡Cuidado en Web!
+        Persistencia local segura para Móvil. <LucideItem name="AlertTriangle" color="var(--sl-color-orange)" size={14} client:load>¡Cuidado en Web!</LucideItem>
     </Card>
 </CardGrid>
 
@@ -39,8 +41,8 @@ npx expo install @supabase/supabase-js @react-native-async-storage/async-storage
 
 Para una arquitectura robusta, aislaremos el almacenamiento en un módulo <Highlight variant="primary">core/storage</Highlight>. Esto nos permite usar una "flag" o detección de plataforma para alternar entre:
 
-- 📱 Mobile -> @react-native-async-storage/<Highlight variant="purple">async-storage</Highlight>
-- 🌐 Web -> <Highlight variant="green">localStorage</Highlight> (nativo del navegador)
+- <LucideItem name="Smartphone" color="var(--sl-color-purple)" client:load>Mobile -> @react-native-async-storage/<Highlight variant="purple">async-storage</Highlight></LucideItem>
+- <LucideItem name="Globe" color="var(--sl-color-green)" client:load>Web -> <Highlight variant="green">localStorage</Highlight> (nativo del navegador)</LucideItem>
 
 Veremos la implementación de este adaptador en el siguiente módulo.
 :::
