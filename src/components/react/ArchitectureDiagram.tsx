@@ -110,7 +110,7 @@ const getLayout = (isMobile: boolean) => {
     nodes.push({
         id: 'supabase',
         type: 'step',
-        position: isMobile ? { x: 20, y: 50 } : { x: 20, y: 150 },
+        position: isMobile ? { x: 20, y: 20 } : { x: 20, y: 150 },
         data: {
             label: 'Supabase DB',
             active: false,
@@ -123,7 +123,7 @@ const getLayout = (isMobile: boolean) => {
     nodes.push({
         id: 'expo',
         type: 'step',
-        position: isMobile ? { x: 20, y: 350 } : { x: 300, y: 150 },
+        position: isMobile ? { x: 20, y: 200 } : { x: 300, y: 150 },
         data: {
             label: 'Expo Push Service',
             active: false,
@@ -136,7 +136,7 @@ const getLayout = (isMobile: boolean) => {
     nodes.push({
         id: 'native',
         type: 'step',
-        position: isMobile ? { x: 20, y: 650 } : { x: 580, y: 150 },
+        position: isMobile ? { x: 20, y: 400 } : { x: 580, y: 150 },
         data: {
             label: 'APNs / FCM',
             active: false,
@@ -149,7 +149,7 @@ const getLayout = (isMobile: boolean) => {
     nodes.push({
         id: 'app',
         type: 'step',
-        position: isMobile ? { x: 20, y: 950 } : { x: 860, y: 150 },
+        position: isMobile ? { x: 20, y: 550 } : { x: 860, y: 150 },
         data: {
             label: 'User App',
             active: false,
@@ -162,7 +162,7 @@ const getLayout = (isMobile: boolean) => {
     nodes.push({
         id: 'apple',
         type: 'config',
-        position: isMobile ? { x: 230, y: 320 } : { x: 280, y: 50 },
+        position: isMobile ? { x: 250, y: 170 } : { x: 280, y: 50 },
         data: { label: 'Apple Key (.p8)', active: false, icon: <Key size={14} /> },
     });
 
@@ -170,7 +170,7 @@ const getLayout = (isMobile: boolean) => {
     nodes.push({
         id: 'google',
         type: 'config',
-        position: isMobile ? { x: 230, y: 380 } : { x: 280, y: 320 },
+        position: isMobile ? { x: 250, y: 280 } : { x: 280, y: 320 },
         data: { label: 'Google Service Account', active: false, icon: <ShieldCheck size={14} /> },
     });
 
@@ -178,7 +178,7 @@ const getLayout = (isMobile: boolean) => {
     nodes.push({
         id: 'eas',
         type: 'config',
-        position: isMobile ? { x: 230, y: 920 } : { x: 840, y: 50 },
+        position: isMobile ? { x: 250, y: 540 } : { x: 840, y: 50 },
         data: { label: 'eas.json', active: false, icon: <Zap size={14} /> },
     });
 
@@ -186,7 +186,7 @@ const getLayout = (isMobile: boolean) => {
     nodes.push({
         id: 'googleSvc',
         type: 'config',
-        position: isMobile ? { x: 230, y: 980 } : { x: 840, y: 320 },
+        position: isMobile ? { x: 250, y: 600 } : { x: 840, y: 320 },
         data: { label: 'google-services.json', active: false, icon: <FileJson size={14} /> },
     });
 
@@ -333,7 +333,7 @@ const ArchitectureDiagramContent = () => {
 
 export default function ArchitectureDiagram() {
     return (
-        <div className="border border-[var(--sl-color-gray-5)] rounded-xl overflow-hidden shadow-sm bg-[var(--sl-color-bg-canvas)] relative h-[600px] w-full">
+        <div className="border border-[var(--sl-color-gray-5)] rounded-xl overflow-hidden shadow-sm bg-[var(--sl-color-bg-canvas)] relative h-[750px] md:h-[500px] w-full">
             <ReactFlowProvider>
                 <ArchitectureDiagramContent />
             </ReactFlowProvider>
