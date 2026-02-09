@@ -6,7 +6,7 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 import GuideStep from '@components/GuideStep.astro';
 import Highlight from '@components/Highlight.astro';
 
-import { LucideItem } from '@components/react/LucideItem';
+import { LucideItem } from '@components/react/common/LucideItem';
 
 <GuideStep total={7}/>
 
@@ -34,24 +34,24 @@ export const NotificationAdapter = {
     // Definimos qué pasa si recibimos una notificación con la APP ABIERTA (Foreground)
     Notifications.setNotificationHandler({
       handleNotification: async () => ({
-        // 🔔 shouldShowAlert: 
+        // shouldShowAlert: 
         // true = Permite mostrar alertas visuales en general.
         // false = Silencia la notificación visualmente.
         shouldShowAlert: true,
 
-        // 🔊 shouldPlaySound: 
+        // shouldPlaySound: 
         // true = Reproduce el sonido o vibración del sistema.
         shouldPlaySound: true,
 
-        // 🔴 shouldSetBadge: 
+        // shouldSetBadge: 
         // false = No altera el contador rojo de la app (Home Screen).
         shouldSetBadge: false,
 
-        // 🏳️ shouldShowBanner (iOS Nuevo Standard):
+        // shouldShowBanner (iOS Nuevo Standard):
         // true = Muestra el banner deslizable desde arriba (como un mensaje normal).
         shouldShowBanner: true,
 
-        // 📜 shouldShowList (iOS Nuevo Standard):
+        // shouldShowList (iOS Nuevo Standard):
         // true = Mantiene la notificación visible en el Centro de Notificaciones.
         shouldShowList: true,
       }),
@@ -86,7 +86,7 @@ export const NotificationAdapter = {
         finalStatus = status;
       }
 
-      // Si el usuario dijo que NO... nos rendimos :(
+      // Si el usuario dijo que NO... nos rendimos.
       if (finalStatus !== 'granted') {
         console.log('¡Permiso denegado por el usuario!');
         return null;

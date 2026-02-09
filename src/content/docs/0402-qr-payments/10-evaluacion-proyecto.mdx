@@ -1,0 +1,100 @@
+---
+title: "Proyecto Final: El Gran Checkout"
+description: "Poniendo a prueba tus skills de QR y Pagos"
+---
+
+import { Card, CardGrid, Steps, Badge } from '@astrojs/starlight/components';
+import Highlight from '@components/Highlight.astro';
+import GuideStep from '@components/GuideStep.astro';
+import FinalProjectDiagram from '@components/react/0402/FinalProjectDiagram';
+import QRPaymentsRubric from '@components/react/0402/QRPaymentsRubric';
+import { LucideIcon } from '@components/react/common/LucideIcon';
+import { LucideItem } from '@components/react/common/LucideItem';
+
+<GuideStep total={11}/>
+
+¡Llegamos a la meta! <LucideIcon name="Flag" size={20} color="var(--sl-color-accent)" /> Si estás leyendo esto, ya es un hecho: ya sabes cómo activar la cámara, leer un QR y simular un pago sin que colapse el backend. Ahora es el momento de demostrar que puedes armar un flujo **de otro nivel**.
+
+## <LucideIcon name="Map" size={24} color="var(--sl-color-accent)" /> Roadmap de Entrega
+
+Acá tenés el camino para que tu App quede impecable.
+
+<FinalProjectDiagram client:load />
+
+## <LucideIcon name="Target" size={24} color="var(--sl-color-accent)" /> Main Quests
+
+No buscamos un código perfecto, buscamos código que **corra y sea profesional**. Estas son tus misiones principales:
+
+<Steps>
+1.  **El Momento "Scanner"**
+    Tu App tiene que levantar la cámara y, en cuanto detecte un QR válido, mandarte directo a la pantalla de pago.
+    :::tip[Bonus Point]
+    Sumale un sonido o una vibración (`Haptics`) cuando el escaneo sea exitoso. <Badge text="+5 pts" variant="success" />
+    :::
+
+2.  **Lógica del Checkout**
+    Queremos ver el flujo real (aunque sea mock):
+    *   Pantalla de resumen con el detalle de lo que vas a pagar.
+    *   Un botón de "Pagar Ahora" que dispare el servicio.
+    *   Manejo de estados: Mientras carga ⮕ Éxito o Error.
+
+3.  **Clean Code (Feature-Based)**
+    Nada de meter todo en un solo archivo. Vamos a respetar la estructura modular que vinimos trabajando. Así es como debería quedar tu árbol de archivos:
+</Steps>
+
+```bash
+📂 src/
+├── 📱 app/                      # Pantallas y Navegación
+│   ├── (auth)/                  # Login / Register
+│   ├── (tabs)/                  # Feed / Perfil
+│   └── (checkout)/              # 💳 El flujo de pagos
+│       ├── _layout.tsx
+│       ├── scanner.tsx          # Pantalla de la cámara
+│       └── payment.tsx          # Pantalla de confirmación
+├── 🧠 lib/                      # La lógica pesada
+│   ├── core/
+│   │   ├── payments/            # Adaptadores de pago (Mock)
+│   │   └── qr/                  # Utilidades de escaneo
+│   └── modules/                 # Hooks de negocio
+│       └── useCheckout.ts
+└── 🧱 components/               # Tus átomos de UI
+```
+
+---
+
+## <LucideIcon name="Briefcase" size={24} color="var(--sl-color-accent)" /> Checklist para el Portfolio
+
+Si querés que este proyecto se vea re copado en tu GitHub, asegurate de cumplir con esto:
+
+<CardGrid>
+  <Card title="Modo Oscuro" icon="moon">
+    Tu App tiene que verse bien en ambos temas. Usá las constantes de color del sistema.
+  </Card>
+  <Card title="Manejo de Errores" icon="warning">
+    ¿Qué pasa si no hay internet? ¿O si el QR no es lo que esperábamos? Que la App no se cuelgue.
+  </Card>
+  <Card title="UX con Feedback" icon="rocket">
+    Usá feedback visual. Que el usuario nunca se quede pensando "¿estará haciendo algo esto?".
+  </Card>
+  <Card title="README Atómico" icon="document">
+    Explicá cómo correr el proyecto. Un GIF del flujo funcionando suma mil puntos.
+  </Card>
+</CardGrid>
+
+---
+
+## <LucideIcon name="BarChart3" size={24} color="var(--sl-color-accent)" /> Rúbrica de Evaluación (El "Boss Fight")
+
+Como este es un proyecto serio, hemos preparado una rúbrica interactiva. Acá tenés la guía técnica para alcanzar el **DA (Destacado)**:
+
+<QRPaymentsRubric client:load />
+
+> **Nota del Docente**: Este proyecto es la prueba de fuego de que puedes construir apps del mundo real. No te enfoques solo en que "ande", enfócate en que se vea y se sienta como una App profesional.
+
+---
+
+:::tip[Pro Tip]
+Si terminás rápido, probá integrar las notificaciones del módulo anterior. Que al completar el pago, te llegue un push de "¡Pago Recibido!". Ahí sí que la rompés toda.
+:::
+
+**¡Dale con todo! Esperamos ver esa app. <LucideIcon name="CheckCircle2" size={20} color="var(--sl-color-accent)" />**

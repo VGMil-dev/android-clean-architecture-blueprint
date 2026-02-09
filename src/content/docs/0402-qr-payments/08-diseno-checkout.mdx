@@ -1,0 +1,51 @@
+---
+title: "Diseño de Checkout"
+description: "Diseño de checkout en Expo"
+---
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import Highlight from '@components/Highlight.astro';
+import GuideStep from '@components/GuideStep.astro';
+import ZoomImage from '@components/ZoomImage.astro';
+import { LucideItem } from '@components/react/common/LucideItem';
+// import checkoutUIImg from '@assets/payment_ui_checkout.png';
+
+<GuideStep total={11}/>
+
+El checkout es el momento más delicado de la App. Cualquier confusión o retraso puede hacer que el usuario abandone la compra.
+
+## Principios de Diseño Premium
+
+<CardGrid stagger>
+  <Card title="Claridad" icon="rocket">
+    El precio total debe ser lo más grande y claro de la pantalla. Evita costos ocultos.
+  </Card>
+  <Card title="Jerarquía" icon="star">
+    Prioriza métodos rápidos (Apple Pay, Google Pay). Tienen un ratio de conversión 3x mayor.
+  </Card>
+</CardGrid>
+
+## Anatomía de un Formulario Moderno
+
+import CreditCardInputDemo from '@components/react/0402/CreditCardInputDemo';
+
+<div className="my-8 not-content flex justify-center">
+  <CreditCardInputDemo client:load />
+</div>
+
+*   <Highlight>Formateo Automático</Highlight>: Agrega espacios cada 4 dígitos en el número de tarjeta.
+*   <Highlight>Detección de Red</Highlight>: Muestra el logo de Visa/Mastercard automáticamente al detectar los primeros dígitos.
+*   <Highlight>Teclado Numérico</Highlight>: Asegúrate de usar `keyboardType="numeric"` para campos de tarjeta y CVV.
+
+```typescript
+// src/app/(checkout)/payment.tsx
+<TextInput
+  placeholder="0000 0000 0000 0000"
+  keyboardType="numeric"
+  maxLength={19}
+  style={styles.input}
+/>
+```
+
+:::tip[UX]
+Usa micro-interacciones suaves (como un ligero brillo o cambio de escala) en el botón de confirmación para que se sienta táctil y satisfactorio.
+:::

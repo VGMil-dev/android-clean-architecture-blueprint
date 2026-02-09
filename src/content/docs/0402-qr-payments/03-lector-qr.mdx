@@ -1,0 +1,91 @@
+---
+title: "Implementación: Lector QR"
+description: Creando nuestro primer escáner interactivo.
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import Highlight from '@components/Highlight.astro';
+import GuideStep from '@components/GuideStep.astro';
+import QRArchitectureDiagram from '@components/react/0402/QRArchitectureDiagram';
+
+<GuideStep total={11}/>
+
+Una vez configurados los permisos, la implementación de un lector QR en Expo es asombrosamente sencilla gracias a la propiedad `onBarcodeScanned`.
+
+## El Flujo de Datos
+
+Antes de programar, entendamos qué sucede bajo el capó:
+
+<div className="my-8 not-content">
+  <QRArchitectureDiagram client:visible />
+</div>
+
+## Implementación Básica
+
+El componente `CameraView` es extremadamente optimizado. Solo necesitamos pasarle la función que procesará el resultado.
+
+```typescript
+// src/app/(checkout)/scanner.tsx
+
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, Alert } from 'react-native';
+import { CameraView } from 'expo-camera';
+
+export default function QRScanner() {
+  const [scanned, setScanned] = useState(false);
+
+  const handleBarCodeScanned = ({ type, data }) => {
+    setScanned(true);
+    Alert.alert(
+      "Código Scaneado",
+      `Tipo: ${type}\nContenido: ${data}`,
+      [{ text: "OK", onPress: () => setScanned(false) }]
+    );
+  };
+
+  return (
+    <View style={styles.container}>
+      <CameraView
+        style={StyleSheet.absoluteFillObject}
+        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+        barcodeSettings={{
+          barcodeTypes: ["qr"], // Limitamos solo a QR para mayor eficiencia
+        }}
+      />
+      {scanned && (
+        <View style={styles.overlay}>
+           <Text style={styles.text}>Procesando...</Text>
+        </View>
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  overlay: { 
+    position: 'absolute', 
+    bottom: 50, 
+    alignSelf: 'center', 
+    backgroundColor: '#000000aa', 
+    padding: 20, 
+    borderRadius: 10 
+  },
+  text: { color: 'white', fontWeight: 'bold' }
+});
+```
+
+### Tips de Pro
+
+<CardGrid stagger>
+  <Card title="barcodeSettings" icon="setting">
+    Limitar los tipos de códigos (ej: `["qr"]`) mejora drásticamente el rendimiento y evita falsos positivos.
+  </Card>
+  <Card title="Manejo de estados" icon="rocket">
+    Usa el flag `scanned` para pausar la lectura mientras el usuario interactúa con el resultado.
+  </Card>
+</CardGrid>
+
+:::caution[Idempotencia y Debouncing]
+Los motores de cámara son rápidos y pueden disparar `onBarcodeScanned` 30 veces por segundo. Asegurate de bloquear nuevas lecturas (`scanned`, `isLoading` o `isPaused`) hasta que la acción actual termine, para evitar navegar varias veces a la misma pantalla o disparar múltiples alertas.
+:::

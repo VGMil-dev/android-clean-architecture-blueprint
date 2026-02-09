@@ -55,6 +55,32 @@ export default defineConfig({
 						{ slug: '0401-expo-notifications/07-troubleshooting' },
 					],
 				},
+				{
+					label: 'QR & Pagos',
+					items: [
+						{
+							label: 'Lectura de Códigos',
+							items: [
+								{ slug: '0402-qr-payments/01-intro-conceptos' },
+								{ slug: '0402-qr-payments/02-expo-camera-setup' },
+								{ slug: '0402-qr-payments/03-lector-qr' },
+								{ slug: '0402-qr-payments/04-lector-barras' },
+								{ slug: '0402-qr-payments/05-feedback-escaneo' },
+								{ slug: '0402-qr-payments/05b-integracion-datos' },
+							],
+						},
+						{
+							label: 'Conceptos de Pago',
+							items: [
+								{ slug: '0402-qr-payments/06-pasarelas-intro' },
+								{ slug: '0402-qr-payments/07-arquitectura-pagos' },
+								{ slug: '0402-qr-payments/08-diseno-checkout' },
+								{ slug: '0402-qr-payments/09-diseno-confirmacion' },
+							],
+						},
+						{ slug: '0402-qr-payments/10-evaluacion-proyecto' },
+					],
+				},
 			],
 		}),
 	],

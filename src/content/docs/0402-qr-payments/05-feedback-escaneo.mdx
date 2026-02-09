@@ -1,0 +1,89 @@
+---
+title: UX y Feedback de Escaneo
+description: Micro-interacciones que mejoran la confianza del usuario.
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import Highlight from '@components/Highlight.astro';
+import GuideStep from '@components/GuideStep.astro';
+import TechStack from '@components/TechStack.astro';
+import { LucideItem } from '@components/react/common/LucideItem';
+
+<GuideStep total={11}/>
+
+<TechStack techs={[
+  { tecnologia: 'Expo Haptics', color: 'note' },
+  { tecnologia: 'Expo AV', color: 'tip' }
+]} />
+
+Un escáner sin feedback se siente "muerto". Para una UX premium, debemos confirmar al usuario que la acción fue exitosa mediante tres canales:
+
+<CardGrid stagger>
+  <Card title="Háptico" icon="rocket">
+    Una vibración corta y sutil (`ImpactFeedbackStyle.Light`) al momento exacto de la lectura.
+  </Card>
+  <Card title="Visual" icon="star">
+    Cambio de color en el overlay o un destello rápido para confirmar el éxito.
+  </Card>
+  <Card title="Auditivo" icon="warning">
+    Un "beep" clásico, útil en entornos industriales donde el usuario no mira la pantalla.
+  </Card>
+</CardGrid>
+
+## 1. Feedback Háptico (Vibración)
+
+Es el estándar de la industria. Siente la confirmación física sin mirar la pantalla.
+
+```bash
+# terminal
+npx expo install expo-haptics
+```
+
+```typescript
+// src/app/(checkout)/scanner.tsx
+import * as Haptics from 'expo-haptics';
+
+const handleBarCodeScanned = () => {
+  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  // ... resto de la lógica
+};
+```
+
+## 2. Indicadores Visuales
+
+Usa un overlay (una "mira") que cambie de color o brille cuando detecte algo.
+
+import ScannerFeedbackDiagram from '@components/react/0402/ScannerFeedbackDiagram';
+
+<div className="my-8 not-content flex justify-center">
+  <ScannerFeedbackDiagram client:load />
+</div>
+
+*   **Estado Idle**: Mira blanca/gris con animación de escaneo.
+*   **Estado Éxito**: Mira verde + icono de check.
+*   **Estado Error**: Mira roja + icono de alerta.
+
+## 3. Audio (Beeps)
+
+Especialmente útil en entornos de inventario donde el operario no siempre mira el smartphone.
+
+```bash
+# terminal
+npx expo install expo-av
+```
+
+```typescript
+// src/lib/core/qr/audioService.ts (Hypothetical)
+import { Audio } from 'expo-av';
+
+async function playSuccessSound() {
+  const { sound } = await Audio.Sound.createAsync(
+     require('./assets/success_beep.mp3')
+  );
+  await sound.playAsync();
+}
+```
+
+:::tip[Accesibilidad]
+El feedback debe ser **multimodal**. No dependas solo del color; usa una combinación de vibración, sonido y cambios visuales para asegurar que cualquier usuario entienda que el escaneo fue exitoso.
+:::

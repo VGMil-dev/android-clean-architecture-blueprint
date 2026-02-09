@@ -1,0 +1,85 @@
+---
+title: "Puente: De la Cámara a la Lógica"
+description: Cómo transformar un string escaneado en una acción real en tu App.
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import Highlight from '@components/Highlight.astro';
+import GuideStep from '@components/GuideStep.astro';
+import TechStack from '@components/TechStack.astro';
+
+<GuideStep total={11}/>
+
+Tener el valor del código (ej: `"SKU-9920"`) es solo el principio. El verdadero reto es qué hacer con él. En una arquitectura profesional, el escáner no toma decisiones; solo emite datos.
+
+## El Patrón "Observer"
+
+Tu componente de cámara debe ser un "emisor". Cuando detecta algo, delega la responsabilidad a un controlador superior.
+
+import ObserverPatternDiagram from '@components/react/0402/ObserverPatternDiagram';
+
+<div className="my-8 not-content flex justify-center">
+  <ObserverPatternDiagram client:load />
+</div>
+
+```typescript
+// 🧱 src/components/scanner/CameraScanner.tsx
+export const CameraScanner = ({ onDataDetected }) => {
+  const handleBarCodeScanned = ({ data }) => {
+    // 1. Emitir el dato al padre
+    onDataDetected(data);
+  };
+
+  return <CameraView onBarcodeScanned={handleBarCodeScanned} ... />;
+};
+```
+
+## Estrategias de Integración
+
+Dependiendo de tu app, el dato escaneado disparará diferentes flujos:
+
+<CardGrid stagger>
+  <Card title="Búsqueda en API" icon="rocket">
+    Tomas el ID y haces un fetch a tu backend para obtener el nombre, precio e imagen del producto.
+  </Card>
+  <Card title="Deep Linking" icon="star">
+    Si el QR contiene una URL de tu app (`myapp://products/123`), usas `Expo Router` para navegar directamente.
+  </Card>
+  <Card title="Validación Local" icon="seti:lock">
+    Búsqueda rápida en un array local (útil para apps offline o tickets precargados).
+  </Card>
+</CardGrid>
+
+## Ejemplo: Búsqueda y Navegación
+
+Este ejemplo muestra cómo unir el escaneo con la lógica de negocio en un Screen:
+
+```typescript
+// src/app/(checkout)/scanner.tsx (Lógica de Navegación)
+import { router } from 'expo-router';
+import { useProductStore } from '@/lib/modules/products/store';
+
+const ScanScreen = () => {
+  const { fetchProduct } = useProductStore();
+
+  const handleData = async (code: string) => {
+    try {
+      // 1. Buscamos el producto en nuestro cerebro (Lib/Modules)
+      const success = await fetchProduct(code);
+      
+      if (success) {
+        // 2. Si existe, navegamos al detalle
+        router.push(`/products/${code}`);
+      }
+    } catch (error) {
+      Alert.alert("Error", "Código no registrado en el sistema");
+    }
+  };
+
+  return <CameraScanner onDataDetected={handleData} />;
+};
+```
+
+:::caution[Idempotencia y Debouncing]
+Los motores de cámara son rápidos y pueden disparar `onBarcodeScanned` 30 veces por segundo. Asegurate de bloquear nuevas lecturas (`isLoading` o `isPaused`) hasta que la acción actual termine, para evitar navegar varias veces a la misma pantalla o duplicar procesos.
+:::

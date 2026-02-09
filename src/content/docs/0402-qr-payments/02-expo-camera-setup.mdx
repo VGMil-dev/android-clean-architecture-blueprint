@@ -1,0 +1,82 @@
+---
+title: "Configuración de Cámara en Expo"
+description: "Cómo configurar la cámara en Expo"
+---
+
+import { Card, CardGrid, Steps } from '@astrojs/starlight/components';
+import GuideStep from '@components/GuideStep.astro';
+import Highlight from '@components/Highlight.astro';
+import StepHeader from '@components/StepHeader.astro';
+
+<GuideStep total={11}/>
+
+Para leer códigos en Expo, utilizaremos la librería oficial <Highlight>expo-camera</Highlight>, que nos da acceso al hardware de la cámara y a las capacidades de reconocimiento de patrones.
+
+<StepHeader number="1" title="Instalación" variant="note" />
+
+Ejecuta el siguiente comando en tu terminal para instalar el core de visión:
+
+```bash
+# terminal
+npx expo install expo-camera
+```
+
+<StepHeader number="2" title="Configuración en app.json" variant="tip" />
+
+Es **crítico** declarar los permisos necesarios para que tanto iOS como Android permitan el acceso al hardware.
+
+```json
+// app.json
+{
+  "expo": {
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "recordAudioPermission": false,
+          "cameraPermission": "Permite que la app use la cámara para escanear códigos."
+        }
+      ]
+    ]
+  }
+}
+```
+
+<StepHeader number="3" title="Manejo de Permisos" variant="success" />
+
+No asumas que el usuario siempre dará permiso. Debes manejar los estados de carga y denegación con elegancia.
+
+```typescript
+// src/app/(checkout)/scanner.tsx
+import { Camera, CameraView, useCameraPermissions } from 'expo-camera';
+import { Button, Text, View } from 'react-native';
+
+export default function App() {
+  const [permission, requestPermission] = useCameraPermissions();
+
+  if (!permission) {
+    // Los permisos siguen cargando
+    return <View />;
+  }
+
+  if (!permission.granted) {
+    // Los permisos no han sido otorgados
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={{ textAlign: 'center' }}>Necesitamos acceso a tu cámara</Text>
+        <Button onPress={requestPermission} title="Dar permiso" />
+      </View>
+    );
+  }
+
+  return (
+    <View style={{ flex: 1 }}>
+       <CameraView style={{ flex: 1 }} />
+    </View>
+  );
+}
+```
+
+:::warning[Standalone Apps]
+Los cambios en `app.json` relacionados con permisos requieren un nuevo **Development Build** mediante EAS para surtir efecto en dispositivos físicos fuera de Expo Go.
+:::

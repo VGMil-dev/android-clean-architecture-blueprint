@@ -5,15 +5,17 @@ description: Cómo implementar un sistema de protección de rutas basado en sesi
 import { Card, Steps } from '@astrojs/starlight/components';
 import GuideStep from '@components/GuideStep.astro';
 import Highlight from '@components/Highlight.astro';
-import ZoomImage from '@components/ZoomImage.astro';
-import napkinAuth from '@assets/napkin_auth_protection.png';
+import AuthProtectionDiagram from '@components/react/0401/AuthProtectionDiagram';
+// import napkinAuth from '@assets/napkin_auth_protection.png';
 
 <GuideStep total={7}/>
 
 Una app segura nunca debe dejar que un usuario no autenticado vea pantallas privadas.
 Usaremos `expo-router` y nuestro `useAuth` para crear un sistema de protección robusto.
 
-<ZoomImage src={napkinAuth} alt="Diagrama de Flujo de Protección de Rutas" />
+<AuthProtectionDiagram client:load />
+
+{/* <ZoomImage src={napkinAuth} alt="Diagrama de Flujo de Protección de Rutas" /> */}
 
 ## El Guardián del Layout
 
@@ -45,10 +47,10 @@ function AuthLayout() {
     const inAuthGroup = segments[0] === '(auth)';
 
     if (!session && !inAuthGroup) {
-      // ⛔ Si NO hay usuario y NO estamos en login -> Mandar a Login
+      // Si NO hay usuario y NO estamos en login -> Mandar a Login
       router.replace('/(auth)/login');
     } else if (session && inAuthGroup) {
-      // ✅ Si HAY usuario y estamos en login -> Mandar al Home
+      // Si HAY usuario y estamos en login -> Mandar al Home
       router.replace('/');
     }
   }, [session, loading, segments]);

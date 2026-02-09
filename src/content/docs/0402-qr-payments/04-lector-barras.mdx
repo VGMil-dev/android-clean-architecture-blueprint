@@ -1,0 +1,68 @@
+---
+title: "Lector de Códigos de Barras"
+description: "Cómo leer códigos de barras en Expo"
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import Highlight from '@components/Highlight.astro';
+import GuideStep from '@components/GuideStep.astro';
+import ZoomImage from '@components/ZoomImage.astro';
+import { LucideItem } from '@components/react/common/LucideItem';
+// import qrConceptsImg from '@assets/napkin_qr_concepts.png';
+
+<GuideStep total={11}/>
+
+Aunque los QRs son muy populares, el mundo del retail y la logística sigue dominado por los **Códigos de Barras (1D)**. El más común es el <Highlight>EAN-13</Highlight>.
+
+:::note[¿Qué es EAN-13?]
+Es el estándar internacional de 13 dígitos que ves en **todos** los productos de consumo (un paquete de galletas, un libro, una botella). Si tu app va a "leer productos", lo que realmente leerá es un código EAN-13.
+:::
+
+## Diferencias Técnicas
+
+<CardGrid stagger>
+  <Card title="Alineación" icon="rocket">
+    Los códigos de barras requieren una alineación horizontal más precisa que los QRs.
+  </Card>
+  <Card title="Iluminación" icon="star">
+    Son más sensibles a reflejos en superficies plásticas o cilíndricas.
+  </Card>
+</CardGrid>
+
+{/* 
+<details>
+  <summary>Ver conceptos visuales</summary>
+  <ZoomImage src={qrConceptsImg} alt="Conceptos QR vs Barcodes" />
+</details> 
+*/}
+
+## Configuración Especial en Expo
+
+Para optimizar la lectura de códigos de barras, debemos ser específicos en los `barcodeTypes`. Si tu app solo leerá productos de supermercado, no tiene sentido que el motor busque QRs.
+
+```typescript
+// src/app/(checkout)/scanner.tsx
+<CameraView
+  style={StyleSheet.absoluteFillObject}
+  onBarcodeScanned={handleBarCodeScanned}
+  barcodeSettings={{
+    barcodeTypes: [
+      "ean13",    // Productos retail
+      "code128",  // Logística/Envíos
+      "upc_a"     // Estándar americano
+    ],
+  }}
+/>
+```
+
+## El Reto de la Focall Point
+
+Los códigos de barras suelen ser pequeños. Algunos tips para mejorar la lectura:
+
+1.  <Highlight>Zoom</Highlight>: Implementar un slider o botón de zoom ayuda a enfocar códigos pequeños sin acercar físicamente el teléfono.
+2.  <Highlight>Flash</Highlight>: Activar el torch de la cámara en ambientes oscuros.
+3.  <Highlight>Overlay de Enfoque</Highlight>: Dibujar un rectángulo guía en la pantalla para que el usuario sepa dónde centrar el código.
+
+:::important[Rendimiento]
+Mientras más tipos de códigos habilites en `barcodeTypes`, más trabajo tendrá que hacer el procesador por cada frame. Mantén la lista lo más corta posible.
+:::

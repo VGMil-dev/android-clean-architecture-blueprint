@@ -1,0 +1,52 @@
+---
+title: "Introducción a Códigos QR y Pagos"
+description: "Conceptos básicos de códigos QR y pagos en Expo"
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import TechStack from '@components/TechStack.astro';
+import GuideStep from '@components/GuideStep.astro';
+import Highlight from '@components/Highlight.astro';
+import QRArchitectureDiagram from '@components/react/0402/QRArchitectureDiagram';
+import { LucideItem } from '@components/react/common/LucideItem';
+
+<GuideStep total={11}/>
+
+<TechStack techs={[
+  { tecnologia: 'Expo Camera', color: 'note' },
+  { tecnologia: 'React Flow', color: 'success' },
+  { tecnologia: 'Payment SDKs', color: 'tip' }
+]} />
+
+En el mundo del desarrollo móvil, la capacidad de interactuar con el mundo físico es vital. Los **QR** y los **Códigos de Barras** son el puente entre un objeto físico (un producto, una entrada, una mesa) y nuestra lógica digital.
+
+:::tip[Objetivo]
+Esta guía te enseñará a integrar visión artificial y flujos de pago con una estética premium y arquitectura robusta, convirtiendo tu App en una herramienta profesional de negocio.
+:::
+
+## Casos de Uso en Expo
+
+<CardGrid stagger>
+  <Card title="Retail" icon="rocket">
+    Escaneo de productos para consultar precios o stock en tiempo real.
+  </Card>
+  <Card title="Ticketing" icon="seti:lock">
+    Validación de entradas en eventos con feedback instantáneo.
+  </Card>
+  <Card title="Fintech" icon="seti:db">
+    Generación y lectura de QRs para transacciones seguras.
+  </Card>
+  <Card title="Logística" icon="star">
+    Rastreo de paquetes mediante códigos de barras industriales (EAN-13).
+  </Card>
+</CardGrid>
+
+## Requisitos Previos
+
+* <LucideItem name="CheckCircle" color="var(--sl-color-green)" client:load>**Dispositivo Físico** (Recomendado para testing de cámara)</LucideItem>
+* <LucideItem name="CheckCircle" color="var(--sl-color-green)" client:load>**Conocimientos básicos de Hooks**</LucideItem>
+* <LucideItem name="CheckCircle" color="var(--sl-color-green)" client:load>**EAS Account** (Para desarrollo builds de cámara)</LucideItem>
+
+:::note[¿Por qué aprender esto?]
+Integrar lectores visuales no solo mejora la UX eliminando la entrada manual de datos, sino que abre la puerta a la automatización de procesos críticos de negocio.
+:::

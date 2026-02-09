@@ -22,7 +22,7 @@ Para que las notificaciones lleguen a dispositivos Android reales en producción
 
 Así es como se conectan las piezas: Tu App, Firebase y los servidores de Expo (EAS).
 
-import { LucideItem } from '@components/react/LucideItem';
+import { LucideItem } from '@components/react/common/LucideItem';
 
 <ZoomImage src={architectureImg} alt="Diagrama de flujo de credenciales Android (Firebase -> App / Cloud -> EAS)" />
 
@@ -75,7 +75,7 @@ Cambia `usuario` por tu nombre o marca. Este ID será permanente una vez subas l
 │   ├── 📱 app/
 │   └── 🧱 components/
 ├── ⚙️ app.json
-├── <LucideItem name="Settings" size={14} client:load>google-services.json          <--- ¡Aquí! </LucideItem>
+├── <LucideItem name="Settings" size={14} client:load>google-services.json          (Aquí)</LucideItem>
 ├── 🔧 babel.config.js
 ├── 📦 package.json
 └── 📘 tsconfig.json
@@ -124,7 +124,7 @@ Sigue el asistente interactivo:
 
 </Steps>
 
-<Card title="📚 Referencias Oficiales" icon="open-book">
+<Card title="Referencias Oficiales" icon="open-book">
   ¿Te has atascado? Consulta la documentación oficial para más detalles visuales:
   
   - [Expo: Android FCM V1 Credentials](https://docs.expo.dev/push-notifications/fcm-credentials/)

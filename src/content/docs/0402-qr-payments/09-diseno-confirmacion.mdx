@@ -1,0 +1,35 @@
+---
+title: "Diseño de Confirmación"
+description: "Diseño de confirmación en Expo"
+---
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import Highlight from '@components/Highlight.astro';
+import GuideStep from '@components/GuideStep.astro';
+import ZoomImage from '@components/ZoomImage.astro';
+import { LucideItem } from '@components/react/common/LucideItem';
+// import receiptUIImg from '@assets/payment_ui_receipt.png';
+
+<GuideStep total={11}/>
+
+Una vez procesado el pago, el usuario entra en un estado de ansiedad. La pantalla de éxito debe disipar estas dudas instantáneamente mediante elementos visuales de alta confianza.
+
+## Elementos de Éxito
+
+<CardGrid stagger>
+  <Card title="Validación Visual" icon="rocket">
+    Usa el "Gran Check" verde animado. Es la validación psicológica más potente.
+  </Card>
+  <Card title="Resumen" icon="star">
+    Muestra ID de Transacción, Monto y Método (ej: Visa **** 1234) sin obligar a mirar el email.
+  </Card>
+</CardGrid>
+
+## Manejo de Errores (Soft Landing)
+
+Si el pago falla, **no culpes al usuario**.
+*   **Mal**: "Tarjeta rechazada. Fondos insuficientes."
+*   **Bien**: "Lo sentimos, el banco no pudo procesar la transacción. Por favor, intenta con otra tarjeta."
+
+:::note[Micro-Recibos]
+Generar un recibo visual con estilo de "ticket de compra" (bordes dentados, tipografía monoespaciada) añade un toque de diseño premium que los usuarios suelen apreciar y compartir.
+:::

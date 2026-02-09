@@ -30,18 +30,18 @@ export const usePushNotifications = (userId?: string) => {
   // Se ejecuta cuando el 'userId' cambia (login/logout)
   useEffect(() => {
     
-    // A. Cláusula de Guardia 🛡️
+    // A. Cláusula de Guardia
     // Si no hay usuario logueado, no hacemos nada.
     if (!userId) return;
 
     const register = async () => {
-      // B. Llamada al Adaptador 🔌
+      // B. Llamada al Adaptador
       // Todo el trabajo sucio de permisos ocurre aquí dentro
       const token = await NotificationAdapter.registerForPushNotificationsAsync();
       
       if (token) {
         console.log('Token obtenido:', token);
-        // C. Persistencia 💾
+        // C. Persistencia
         // Si tenemos token, lo guardamos en la nube
         await saveTokenToDatabase(token, userId);
       }
@@ -52,7 +52,7 @@ export const usePushNotifications = (userId?: string) => {
   }, [userId]); // <--- Array de dependencias: se re-ejecuta si userId cambia
 };
 
-// 3. Función Auxiliar de Supabase ⚡
+// 3. Función Auxiliar de Supabase
 async function saveTokenToDatabase(token: string, userId: string) {
   // Usamos 'upsert' (Insert or Update)
   // Si el token ya existe, actualiza el timestamp. Si no, lo crea.
@@ -69,7 +69,7 @@ async function saveTokenToDatabase(token: string, userId: string) {
   if (error) {
     console.error('Error guardando device:', error);
   } else {
-    console.log('Dispositivo registrado en Supabase ✅');
+    console.log('Dispositivo registrado en Supabase');
   }
 }
 ```

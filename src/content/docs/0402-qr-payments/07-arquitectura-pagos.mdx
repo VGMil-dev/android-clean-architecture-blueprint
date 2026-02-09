@@ -1,0 +1,65 @@
+---
+title: "Arquitectura de Pagos"
+description: "Arquitectura de pagos en Expo"
+---
+
+import { Card, CardGrid, Steps } from '@astrojs/starlight/components';
+import Highlight from '@components/Highlight.astro';
+import GuideStep from '@components/GuideStep.astro';
+import PaymentArchitectureDiagram from '@components/react/0402/PaymentArchitectureDiagram';
+// import paymentFlowImg from '@assets/napkin_payment_flow.png';
+
+<GuideStep total={11}/>
+
+La arquitectura de pagos es un baile sincronizado entre tu App, tu Servidor y la Pasarela. La seguridad no es opcional; es la base del sistema.
+
+<PaymentArchitectureDiagram client:load />
+
+## El Flujo de 4 Pasos
+
+<Steps>
+
+1.  **Tokenización (Client-Side)**
+    El usuario ingresa sus datos. Tu App envía esta información directamente a la Pasarela (ej: Stripe). La pasarela responde con un `PaymentMethod ID` o `Token`. **Tus servidores nunca ven la tarjeta.**
+
+2.  **Intención de Pago (Server-Side)**
+    Tu App envía el token y el monto a **tu backend**. Tu backend contacta a la API de la pasarela para crear un `PaymentIntent`. Esto genera un secreto que autoriza el cargo.
+
+3.  **Confirmación (Client-Side)**
+    La App usa el secreto para confirmar el pago. Si se requiere **3D Secure** (validación bancaria), se abre un modal nativo o webview para que el usuario autorice en su banco.
+
+4.  **Webhook (Async Success)**
+    Incluso si la App se cierra, la Pasarela enviará una petición POST a tu servidor confirmando que el dinero fue capturado. Aquí es donde marcas el pedido como "Pagado" en tu base de datos.
+
+</Steps>
+
+## Seguridad Crítica
+
+*   <Highlight>HTTPS</Highlight>: Obligatorio en todas las comunicaciones.
+*   <Highlight>Idempotencia</Highlight>: Usa claves de idempotencia para evitar cargos duplicados si el usuario presiona "Pagar" dos veces por error.
+*   <Highlight>Entorno de Sandbox</Highlight>: Nunca pruebes con tarjetas reales. Usa las tarjetas de prueba (ej: 4242 4242...) provistas por la documentación oficial.
+
+## Ejemplo: Simulación de Pago (Mock)
+
+Para tu proyecto integrador, no necesitas una cuenta de Stripe real. Puedes simular el flujo mediante un adapter:
+
+```typescript
+// 🧠 lib/core/payments/paymentService.ts
+export const processMockPayment = async (amount: number) => {
+  // 1. Simular latencia de red
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  
+  // 2. Simular éxito (o error aleatorio)
+  const isSuccess = Math.random() > 0.1; 
+  
+  if (isSuccess) {
+    return { success: true, transactionId: `TX-${Date.now()}` };
+  } else {
+    throw new Error("Fondos insuficientes o error de conexión");
+  }
+};
+```
+
+:::warning[Responsabilidad]
+Cualquier filtración de datos de tarjetas en el mundo real puede resultar en multas masivas. Sigue siempre las guías de implementación oficial al pie de la letra.
+:::

@@ -7,8 +7,9 @@ import TechStack from '@components/TechStack.astro';
 import GuideStep from '@components/GuideStep.astro';
 import Highlight from '@components/Highlight.astro';
 import ZoomImage from '@components/ZoomImage.astro';
-import ArchitectureDiagram from '@components/react/ArchitectureDiagram';
-import pushArchImg from '@assets/napkin_push_architecture.png';
+import ArchitectureDiagram from '@components/react/0401/ArchitectureDiagram';
+import { LucideIcon } from '@components/react/common/LucideIcon';
+// import pushArchImg from '@assets/napkin_push_architecture.png';
 
 <GuideStep total={7}/>
 
@@ -17,12 +18,12 @@ El código desordenado es el enemigo de la escalabilidad. Usaremos una estructur
 ## Diagrama de Flujo de Datos
 
 <div className="my-8 not-content">
-  <ArchitectureDiagram client:visible />
+  <ArchitectureDiagram client:load />
 </div>
 
 <details>
   <summary>Ver diagrama estático</summary>
-  <ZoomImage src={pushArchImg} alt="Arquitectura Push Notification" />
+  {/* <ZoomImage src={pushArchImg} alt="Arquitectura Push Notification" /> */}
 </details>
 
 ### Arquitectura Push Notification
@@ -34,7 +35,7 @@ El código desordenado es el enemigo de la escalabilidad. Usaremos una estructur
 *   `eas.json`: Define perfiles de build (dev/prod).
 *   **Credentials**: `.p8` (Apple) y `Service Account` (Google) subidos a Expo.
 
-## Estructura de Carpetas
+## <LucideIcon name="FolderTree" size={24} color="var(--sl-color-accent)" /> Estructura de Carpetas
 
 ```bash
 📂 /

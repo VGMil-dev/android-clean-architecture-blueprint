@@ -1,0 +1,101 @@
+---
+title: "Pasarelas de Pago: Panorama"
+description: Stripe, PayPal y Mercado Pago en el ecosistema móvil.
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import Highlight from '@components/Highlight.astro';
+import GuideStep from '@components/GuideStep.astro';
+import { LucideItem } from '@components/react/common/LucideItem';
+
+<GuideStep total={11}/>
+
+Integrar pagos en una App móvil no significa "guardar tarjetas", sino conectar con expertos procesadores. Estas son las opciones líderes para el ecosistema Expo:
+
+<CardGrid stagger>
+  <Card title="Stripe" icon="rocket">
+    El estándar de oro. SDK Nativo (`@stripe/stripe-react-native`) y documentación impecable. 
+    
+    [Sitio Oficial](https://stripe.com) | [Docs Expo](https://docs.expo.dev/versions/latest/sdk/stripe/)
+  </Card>
+  <Card title="Mercado Pago" icon="star">
+    Rey en Latinoamérica. Integración fuerte con cuotas locales y métodos regionales.
+    
+    [Sitio Oficial](https://www.mercadopago.com) | [MP Developers](https://www.mercadopago.com.ar/developers/es/docs)
+  </Card>
+  <Card title="PayPal" icon="laptop">
+    Confianza universal. Suele integrarse mediante WebViews o Braintree.
+    
+    [Sitio Oficial](https://www.paypal.com) | [PayPal Developer](https://developer.paypal.com/)
+  </Card>
+</CardGrid>
+
+## Conceptos Clave
+
+1.  <Highlight>Client-Side vs Server-Side</Highlight>: El front-end (Expo) solo maneja la captura de datos (tokens). El cargo real **siempre** debe suceder en un servidor seguro para evitar fraudes.
+2.  <Highlight>Tokens de Seguridad</Highlight>: Nunca manejes números de tarjeta reales en tu base de datos. Las pasarelas te devuelven un "token" de un solo uso.
+3.  <Highlight>Webhooks</Highlight>: Servidores que escuchan eventos de la pasarela (ej: "Pago Completado") para actualizar tu base de datos de forma asíncrona.
+
+## Modalidad de Integración en Expo
+
+*   **SDKs Nativos**: `@stripe/stripe-react-native`. Requiere development builds.
+*   **Webview Bridge**: Ideal para PayPal o integraciones rápidas donde el checkout sucede en una web segura y luego vuelve a la App.
+
+:::important[Regla de Oro]
+**Jamás** almacenes información sensible de crédito. Deja que los expertos (Stripe/MP) se encarguen de la seguridad PCI DSS.
+:::
+
+## Stripe: Mi primer pago (Tutorial Rápido)
+
+Si decides ir por el camino de **Stripe**, estos son los pasos para empezar hoy mismo:
+
+### 1. Instalación
+Necesitas el SDK de Stripe y habilitarlo en tu proyecto Expo.
+
+```bash
+# terminal
+npx expo install @stripe/stripe-react-native
+```
+
+### 2. Configuración (EAS Build)
+Al ser un módulo nativo, **requiere un Development Build**. Agrega el plugin en tu `app.json`:
+
+```json
+// app.json
+{
+  "expo": {
+    "plugins": [
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "merchant.com.tuapp",
+          "enableGooglePay": true
+        }
+      ]
+    ]
+  }
+}
+```
+
+### 3. El Provider (Root Layout)
+Envuelve tu aplicación con el `StripeProvider` en el archivo raíz.
+
+```typescript
+// src/app/_layout.tsx
+import { StripeProvider } from '@stripe/stripe-react-native';
+
+export default function RootLayout() {
+  return (
+    <StripeProvider
+      publishableKey="pk_test_tu_llave_aqui"
+      merchantIdentifier="merchant.com.tuapp"
+    >
+      <Stack />
+    </StripeProvider>
+  );
+}
+```
+
+:::tip[Llaves de Prueba]
+Registrate en el dashboard de Stripe y activa el "Test Mode" para obtener tus llaves `pk_test_...`. ¡Nunca uses las de producción en desarrollo!
+:::
