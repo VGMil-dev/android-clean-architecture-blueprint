@@ -90,6 +90,20 @@ Cambia `usuario` por tu nombre o marca. Este ID será permanente una vez subas l
   Aunque contiene identificadores públicos, es una buena práctica de higiene mantenerlo fuera del control de versiones si es posible, o usar secretos de EAS si trabajas en equipo.
 </Card>
 
+
+<Card title="🛑 CHECKLIST DE SUPERVIVENCIA" icon="warning">
+  <div slot="title" className="flex items-center gap-2">
+    <LucideItem name="AlertTriangle" color="var(--sl-color-red)" client:load>CHECKLIST DE SUPERVIVENCIA</LucideItem>
+  </div>
+  Antes de cualquier comando, verifica esto 3 veces. El 90% de los errores son por esto:
+
+  1.  [ ] **Package Name**: ¿El `android.package` en `app.json` es **IDÉNTICO** al de Firebase?
+      *   `com.miempresa.app` ≠ `com.miempresa.App` (Las mayúsculas importan).
+  2.  [ ] **Archivo Correcto**: ¿El archivo descargado se llama exactamente `google-services.json`?
+      *   Si tu navegador lo bajó como `google-services(1).json`, **¡RENÓMBRALO!**
+  3.  [ ] **Ubicación**: ¿Está en la raíz del proyecto (junto a `package.json`)?
+</Card>
+
 <StepHeader number="3" title="Subir Credenciales a EAS" variant="cyan" />
 
 EAS necesita permiso para enviar notificaciones en tu nombre a través de los servidores de Google (FCM V1).
@@ -108,15 +122,19 @@ Sigue el asistente interactivo:
 2.  Selecciona **production** (generalmente las credenciales de push se comparten, pero production es lo estándar).
 3.  Elige **Google Service Account Key** (para FCM V1).
     
+
     <ZoomImage src={easCliImg} alt="Menú CLI: EAS Credentials" />
 
-    :::note[Diferencia Clave]
-    Esto es diferente al `google-services.json`. El JSON anterior era para tu **App** (Cliente). Esta llave es para el **Servidor** de Expo (EAS).
+    :::danger[¡NO CONFUNDIR!]
+    NO subas el archivo `google-services.json` aquí.
+    
+    Te está pidiendo la **Service Account Key** (Clave de Cuenta de Servicio). Es un archivo JSON diferente que representa al "Servidor", no a la "App".
     :::
 
 4.  Si te pide generar una nueva (o subir una existente):
-    *   Ve a la consola de Firebase -> Configuración del Proyecto -> **Cuentas de servicio**.
-    *   Dale a "Generar nueva clave privada".
+    *   Ve a la consola de Firebase -> Configuración del Proyecto -> pestaña **Cuentas de servicio**.
+    *   Dale al botón azul **Generar nueva clave privada**.
+    *   Confirma la descarga. Se bajará un archivo JSON con un nombre largo y raro. **Ese es el que debes subir**.
     
     <ZoomImage src={serviceAccountImg} alt="Generar Service Account Key en Firebase" />
 

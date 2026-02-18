@@ -58,6 +58,20 @@ Aquí tienes los sospechosos habituales. Si te encuentras uno, ¡tienes suerte! 
     ```
   </Card>
 
+  <Card title="Crash con IDN.toASCII" icon="error">
+    :::danger[El Síntoma]
+    `java.lang.IllegalArgumentException: Invalid input to toASCII` y la app se cierra al iniciar.
+    :::
+
+    **La Causa:**
+    Estás usando un **guion bajo (`_`)** o caracteres especiales en el nombre de tu proyecto (`slug`) o en la URL de tu backend. El sistema de dominios (DNS) odia los guiones bajos.
+
+    **La Solución:**
+    1. Revisa tu `app.json` -> `expo.slug`. Cambia `mi_app_pro` por `mi-app-pro`.
+    2. Revisa tus variables de entorno (`.env`).
+    3. Si estás en local con un túnel (Ngrok), reinicia el servidor.
+  </Card>
+
   <Card title="Keystore Mismatch" icon="seti:lock">
     :::danger[El Síntoma]
     `The uploaded certificate does not match the old certificate`.
@@ -102,6 +116,51 @@ Cuando el build falla, EAS te da un enlace a una página web. No cierres la pest
 5.  Copia **solo** la línea del error rojo en Google (o pregúntale a ChatGPT).
 
 </Steps>
+
+<StepHeader number="4" title="El Infierno de las Dependencias" variant="red" />
+
+A veces `doctor` te dice que todo está mal, o peor, te dice que todo está bien pero nada funciona. Aquí tienes los 3 niveles de solución, de menos a más destructivo.
+
+<CardGrid>
+  <Card title="Nivel 1: Alineación" icon="rocket">
+    Expo necesita versiones exactas de sus paquetes. Si instalaste algo manualmente, puede que tengas versiones mezcladas.
+    
+    **El Comando Mágico:**
+    ```bash
+    npx expo install --fix
+    ```
+     Esto revisará tu `package.json` y aligneará todas las versiones a las recomendadas por Expo SDK.
+  </Card>
+
+  <Card title="Nivel 2: Limpieza (Cache)" icon="refresh">
+    A veces el empaquetador (Metro) se queda con archivos viejos en memoria. Si haces cambios y no los ves, o tienes errores extraños de importación:
+
+    **El Reinicio Suave:**
+    ```bash
+    npx expo start -c
+    ```
+    La flag `-c` significa `--clear`. Borra la caché temporal.
+  </Card>
+
+  <Card title="Nivel 3: La Opción Nuclear" icon="nuke">
+    Si nada más funciona, es hora de empezar de cero. A veces `node_modules` se corrompe sin remedio.
+
+    **El Reinicio Duro:**
+    1. Borra la carpeta `node_modules`.
+    2. Borra tu archivo de bloqueo (`package-lock.json`, `yarn.lock` o `bun.lock`).
+    3. Reinstala todo.
+
+    ```bash
+    # Si usas npm
+    rm -rf node_modules package-lock.json
+    npm install
+
+    # Si usas bun
+    rm -rf node_modules bun.lockb
+    bun install
+    ```
+  </Card>
+</CardGrid>
 
 :::tip[Expo Doctor]
 Antes de enviar un build, ejecuta `npx expo-doctor` en tu terminal local. Te avisará de incompatibilidades de versiones antes de que gastes tiempo en la nube.

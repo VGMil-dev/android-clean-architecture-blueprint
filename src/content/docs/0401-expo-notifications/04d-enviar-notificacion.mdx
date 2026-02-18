@@ -1,0 +1,36 @@
+---
+title: Enviar Notificaciones
+description: Aprende cómo probar y enviar notificaciones push a tus usuarios.
+---
+
+import { Card } from '@astrojs/starlight/components';
+import GuideStep from '@components/GuideStep.astro';
+import Highlight from '@components/Highlight.astro';
+
+<GuideStep total={7}/>
+
+Una vez que tenemos el **Token** del dispositivo guardado en nuestra base de datos, ¡es hora de usarlo!
+
+En este video veremos cómo realizar el envío de notificaciones push utilizando la herramienta de Expo y cómo integrarlo en nuestro backend.
+
+## Video Tutorial
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 8px;">
+  <iframe 
+    src="https://www.youtube.com/embed/cLMa8-yjTkQ?si=5llrbFx8rlrCE18W" 
+    title="YouTube video player" 
+    frameBorder="0" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+    referrerPolicy="strict-origin-when-cross-origin" 
+    allowFullScreen
+    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+  ></iframe>
+</div>
+
+<br/>
+
+<Card title="Puntos Clave" icon="star">
+  - El **Expo Push Token** es la dirección de envío.
+  - Puedes usar la [Expo Push Notification Tool](https://expo.dev/notifications) para probar envíos manuales.
+  - Para envíos programáticos, necesitarás usar la API de Expo desde tu servidor o Edge Functions.
+</Card>
