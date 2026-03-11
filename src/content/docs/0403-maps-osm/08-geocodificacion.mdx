@@ -1,0 +1,63 @@
+---
+title: Geocodificación — Coords a Texto
+description: Convirtiendo números lat/lng en calles y ciudades legibles
+---
+
+import { DireccionesGeo } from '@components/react/0403/VisualHelpers';
+
+En un mapa, los números de latitud y longitud son útiles para la máquina, pero poco legibles para el humano. La **Geocodificación** es el traductor entre esos dos mundos.
+
+<DireccionesGeo client:load />
+
+## Nominatim: El motor abierto
+
+Usaremos **Nominatim**, la tecnología de búsqueda de OpenStreetMap. Es como el motor de Google Maps pero sin tarjetas de crédito. Sin embargo, al ser gratuito, tiene reglas para mantener la salud del servidor.
+
+:::caution[Política de uso de Nominatim]
+1.  **User-Agent:** Debes identificarte (ej: `headers: { 'User-Agent': 'MiApp/1.0' }`).
+2.  **Límite:** Máximo 1 petición por segundo. No inundes el servidor.
+3.  **Baneos:** Si violas las reglas, tu IP puede ser bloqueada permanentemente.
+:::
+
+## El "Efecto Profesional": Skeleton Loaders
+
+Cuando buscamos una dirección, la red tarda un poco. En lugar de dejar la pantalla vacía o poner un cargador aburrido, usamos **Skeletons** (rectángulos grises que simulan la forma de la respuesta).
+
+Esto reduce la **ansiedad del usuario** y hace que la app se sienta instantánea.
+
+## Implementación: `app/geocodificacion.tsx`
+
+Nota cómo usamos `fetch` nativo de JavaScript para comunicarnos con la API de OSM:
+
+```tsx
+// 📌 Concepto: Geocodificación Inversa (Reverse Geocoding)
+// La geocodificación inversa es preguntar: "¿Qué calle hay en este punto exacto (lat/lng)?"
+const handleBuscar = async () => {
+    // ⏳ Activamos el estado de carga para mostrar el Skeleton Loader al usuario.
+    setLoading(true);
+
+    // 🌐 Petición a Nominatim (OpenStreetMap). 
+    // Usamos el formato 'json' para que sea fácil de procesar en JavaScript.
+    const resp = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=\${lat}&lon=\${lon}`,
+      { 
+        // 👮 Importante: Nominatim exige un 'User-Agent'. Es como firmar tu petición 
+        // para que ellos sepan qué app está usando sus servidores gratuitos.
+        headers: { 'User-Agent': 'repo-movil-mapas/1.0' } 
+      }
+    );
+
+    // 📦 Convertimos la respuesta cruda de la red en un objeto JS (data).
+    const data = await resp.json();
+
+    // 🏠 Guardamos la dirección legible (p. ej. "Calle Larga, Cuenca, Ecuador") 
+    // en nuestro estado para mostrarla en la pantalla.
+    setResult(data.address);
+
+    // ✅ Apagamos el cargador.
+    setLoading(false);
+};
+```
+
+## Ejercicio
+Obtén las coordenadas de la plaza principal de tu ciudad e ingrésalas en la app. ¿El nombre de la calle que devuelve Nominatim coincide con la realidad?

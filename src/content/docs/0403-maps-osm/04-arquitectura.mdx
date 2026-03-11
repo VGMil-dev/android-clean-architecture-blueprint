@@ -1,0 +1,56 @@
+---
+title: Arquitectura del Proyecto
+description: Entendiendo el flujo de datos entre React Native y Leaflet
+---
+
+import ArchitectureDiagram from '@components/react/0403/ArchitectureDiagram';
+import { PuenteWebView } from '@components/react/0403/VisualHelpers';
+
+Para que una app de mapas no se vuelva un caos, debemos separar claramente las responsabilidades. Imagina nuestro proyecto como un **Restaurante**:
+
+*   **`app/` (El Salón):** Donde los usuarios ven el mapa y tocan botones.
+*   **`components/` (La Vajilla):** El mapa en sí mismo es un objeto que podemos mover y reutilizar.
+*   **`hooks/` (La Cocina):** Donde se procesan los permisos de GPS y las coordenadas.
+*   **`constants/` (La Despensa):** Los datos fijos, como las coordenadas de las ciudades.
+
+## Flujo de Datos Interactivo
+
+Observa cómo viaja la información desde que el satélite GPS detecta tu posición hasta que el mapa se actualiza:
+
+<div className="not-content">
+  <ArchitectureDiagram client:load />
+</div>
+
+## El Puente (Bridge)
+
+Como Leaflet corre en un WebView (un mini-navegador), no puede hablar con React Native por teléfono. Tienen que pasarse notas por debajo de una puerta cerrada. Ese mecanismo es el `postMessage`.
+
+<PuenteWebView client:load />
+
+## El Corazón: `MapaLeaflet.tsx`
+
+Este componente es una "caja negra" que oculta toda la complejidad del HTML y Leaflet de nuestras pantallas.
+
+```tsx
+// components/MapaLeaflet.tsx
+// 📌 Concepto: OSM_LAYER es la dirección de la "biblioteca" de imágenes.
+const OSM_LAYER = {
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '© OpenStreetMap contributors',
+};
+
+export const MapaLeaflet = ({ center, zoom, markers }) => (
+    <View className="border-2 border-neon-cyan rounded-xl overflow-hidden">
+        <LeafletView
+            // 📌 Inyectamos el motor Leaflet.js
+            source={require('.../leaflet.html')}
+            mapCenterPosition={center}
+            zoom={zoom}
+            mapLayers={[OSM_LAYER]}
+            mapMarkers={markers}
+        />
+    </View>
+);
+```
+
+En la siguiente lección, usaremos este componente para centrar el mundo en Ecuador.

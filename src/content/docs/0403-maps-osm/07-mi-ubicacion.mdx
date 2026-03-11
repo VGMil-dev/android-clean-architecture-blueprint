@@ -1,0 +1,66 @@
+---
+title: Mi Ubicación — El GPS
+description: Gestionando permisos y sensores de posición en tiempo real
+---
+
+import { MaquinaEstados, TablaPermisos } from '@components/react/0403/VisualHelpers';
+
+El GPS de tu teléfono funciona igual que el de un auto: triangula tu posición usando señales de satélites. Pero en móviles hay una capa extra de seguridad: el **Permiso de Ubicación**.
+
+## La Máquina de Estados
+
+Gestionar un sensor no es algo instantáneo. La app pasa por varias etapas que debemos controlar para no "romper" la experiencia del usuario (UX).
+
+<MaquinaEstados client:load />
+
+## El Hook: `useUbicacion.ts`
+
+Escribir esta lógica en cada pantalla sería un error. Creamos un **Hook** para centralizar la complejidad. Es como tener un "mando a distancia" que cualquier pantalla puede usar.
+
+```ts
+// 📌 Concepto: Encapsulamiento de lógica asíncrona
+// Gestionar el GPS es complejo (permisos, errores, carga). 
+// Al crear un "Hook" (useUbicacion), limpiamos la pantalla principal de código aburrido.
+export const useUbicacion = () => {
+    // 🚦 'idle' significa quieto, 'cargando' buscando satélites, 'obtenida' éxito.
+    const [estado, setEstado] = useState('idle');
+    const [coordenadas, setCoordenadas] = useState(null);
+
+    const solicitar = async () => {
+        setEstado('cargando');
+        
+        // ⚠️ El Sistema Operativo (Android/iOS) exige que el usuario acepte que la app lo rastree.
+        // Foreground significa "solo mientras la app está abierta y en pantalla".
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        
+        // 🛑 Si el usuario dice "No", no podemos hacer nada. Debemos respetar su privacidad.
+        if (status !== 'granted') {
+            setEstado('permisoDenegado');
+            return;
+        }
+
+        // 🎯 Una vez con permiso, pedimos la posición actual. 
+        // Esto puede tardar según si el usuario está bajo techo o en la calle.
+        const loc = await Location.getCurrentPositionAsync({});
+        setCoordenadas(loc.coords);
+        setEstado('obtenida');
+    };
+
+    // 🎁 Devolvemos estas tres cosas para que la pantalla sepa qué mostrar.
+    return { estado, coordenadas, solicitar };
+};
+```
+
+## Gestión de Permisos
+
+El usuario es el dueño de sus datos. Debemos ser claros en por qué pedimos la ubicación.
+
+<TablaPermisos client:load />
+
+## Implementación: `app/ubicacion.tsx`
+
+Nota cómo la UI cambia totalmente según el `estado` del hook. Si el permiso es denegado, usamos el color `neon-pink` para alertar visualmente.
+
+:::caution[En emuladores]
+Los emuladores de Android Studio no tienen GPS. La app mostrará coordenadas de Quito con el badge `[Simulado]`. Para probar el GPS real, usa un dispositivo físico y camina unos metros.
+:::

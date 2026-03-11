@@ -1,0 +1,123 @@
+---
+title: Routing y Tracking
+description: Llevando tu app al siguiente nivel con rutas y seguimiento en vivo
+---
+
+import Highlight from '@components/Highlight.astro';
+import { CasosReales } from '@components/react/0403/VisualHelpers';
+
+> Este es el documento más avanzado. Aquí es donde transformamos un simple visor de mapas en una herramienta de logística real.
+
+## Casos de Uso del Mundo Real
+
+El conocimiento que estás adquiriendo es la base de las industrias tecnológicas más grandes:
+
+<CasosReales client:load />
+
+## PARTE 1 — Routing (Ir de A a B)
+
+Calcular una ruta requiere algoritmos de grafos. No lo hacemos en el móvil; usamos un cerebro externo llamado **OSRM** (Open Source Routing Machine).
+
+:::caution[La trampa de las coordenadas]
+**OSRM** espera `[longitud, latitud]`.
+**Leaflet** espera `[latitud, longitud]`.
+Son **AL REVÉS**. Si tu ruta aparece en el medio del océano, probablemente olvidaste invertir el orden de los números.
+:::
+
+Como Leaflet corre en un WebView, inyectamos código JavaScript para dibujar las líneas de la ruta:
+
+```tsx
+// 📌 El "Injected JavaScript" es código que enviamos desde React Native (tu app)
+// para que se ejecute "dentro" del televisor (el WebView/Leaflet).
+const script = `
+  // 🗺️ Convertimos nuestra lista de coordenadas de React Native a un formato que JS entienda.
+  // Importante: Leaflet usa [lat, lng], OSRM nos devuelve [lng, lat]. ¡Hay que invertirlos!
+  var points = \${JSON.stringify(coords.map(c => [c[1], c[0]]))};
+  
+  // ✍️ Dibujamos una Polilínea (una línea con muchos puntos) en el mapa.
+  // El color '#39FF14' (verde neon) ayuda a que la ruta sea muy visible.
+  L.polyline(points, {color: '#39FF14', weight: 5}).addTo(map);
+  
+  // ✅ Siempre debemos terminar con "true;" para que el WebView sepa que el script se ejecutó con éxito.
+  true;
+`;
+```
+
+## PARTE 2 — Tracking (Seguimiento en vivo)
+
+El tracking es como dejar "migajas de pan" mientras caminas. Usamos `watchPositionAsync` para suscribirnos a los cambios de posición:
+
+```ts
+// 📡 El seguimiento (Tracking) requiere una conexión constante con el GPS del móvil.
+useEffect(() => {
+    // 🔔 watchPositionAsync NO es una foto, es un video. Se queda "viendo" el GPS.
+    const sub = await Location.watchPositionAsync(
+        { 
+            // 🎯 Accuracy.High: Queremos precisión máxima para que el marcador no "salte".
+            accuracy: Location.Accuracy.High, 
+            // 📏 distanceInterval: 10: Solo avísame si el usuario se movió al menos 10 metros.
+            // Esto ahorra muchísima batería.
+            distanceInterval: 10 
+        },
+        (loc) => {
+            // 🚀 Cada vez que nos movemos 10 metros, actualizamos el estado.
+            // Esto hará que el marcador en el mapa se mueva suavemente.
+            setMiloc(loc.coords);
+        }
+    );
+
+    // 🧹 REGLA DE ORO: Si cierras la pantalla, DEBES apagar el GPS.
+    // Si no haces "sub.remove()", la app seguirá usando GPS en segundo plano y matará la batería.
+    return () => sub.remove(); 
+}, []);
+```
+
+Cuando el componente `MapaLeaflet` arranca, genera un documento HTML completo "al vuelo" que el WebView interpreta. Esta es la estructura base que puedes usar para incrustar el mapa:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- 📱 Meta tag vital para que el mapa se vea bien en pantallas móviles y no se "encoja" -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- 🎨 Estilos y Scripts de Leaflet: Son los "planos" y la "maquinaria" del mapa.
+         Los traemos desde un CDN (servidor externo) para no pesar en la app. -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    
+    <style>
+        /* 🏙️ El mapa debe ocupar todo el visor (viewport) del WebView. */
+        #map { height: 100vh; width: 100vw; margin: 0; }
+    </style>
+</head>
+<body>
+    <!-- 🏗️ Este div es el "contenedor" donde Leaflet dibujará el mapa. -->
+    <div id="map"></div>
+
+    <script>
+        // 🚀 Inicialización: 
+        // 1. 'map' es el ID del div de arriba.
+        // 2. setView([-1.83, -78.18], 6) nos ubica en Ecuador con un zoom de país.
+        var map = L.map('map').setView([-1.83, -78.18], 6);
+
+        // 🧱 TileLayer: Es la piel del mapa. OpenStreetMap nos regala estos mosaicos.
+        // Sin esta línea, verías el mapa gris (solo coordenadas sin imagen).
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        
+        // 📨 Inyección dinámica:
+        // Aquí es donde React Native inyecta las coordenadas reales para dibujar rutas o pines.
+        // L.polyline(coords).addTo(map);
+    </script>
+</body>
+</html>
+```
+
+## Plugins de Leaflet: Superpoderes gratuitos
+
+Como estamos en un WebView, puedes usar cualquier plugin de la comunidad Leaflet:
+*   **markercluster:** Para agrupar miles de puntos.
+*   **leaflet-heat:** Para mapas de calor de tráfico o densidad.
+*   **leaflet-draw:** Para permitir al usuario dibujar zonas sobre el mapa.
+
+¡Has completado la teoría! Ahora es momento de demostrarlo en el proyecto final.

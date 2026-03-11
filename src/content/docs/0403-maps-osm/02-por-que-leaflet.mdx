@@ -1,0 +1,39 @@
+---
+title: El Mapa Negro — Por Qué Leaflet
+description: Lecciones de debugging y la arquitectura detrás de los mapas móviles
+---
+
+import Highlight from '@components/Highlight.astro';
+import { DetectiveBug, TileVisualizacion } from '@components/react/0403/VisualHelpers';
+
+## La historia del mapa negro
+
+Durante el desarrollo de este módulo, el primer intento fue usar `react-native-maps` con tiles de OpenStreetMap. El código era correcto. La instalación era correcta. Pero al abrir la app en Expo Go... **mapa negro**. Completamente negro.
+
+¿Por qué? Aquí es donde entra nuestro trabajo de investigación.
+
+<DetectiveBug client:load />
+
+## La Solución: Leaflet + WebView
+
+Para romper el bloqueo nativo de Google Maps en Expo Go, utilizaremos **Leaflet.js** corriendo dentro de un **WebView**.
+
+| Librería | Expo Go | API Key | Costo | Nivel |
+| :--- | :---: | :---: | :---: | :--- |
+| Google Maps SDK | ❌ | ✅ | 💰 | Producción |
+| react-native-maps | ❌ | ❌ | Gratis | Producción |
+| **react-native-leaflet-view** | ✅ | ❌ | **Gratis** | **Educativo** |
+
+> Un **WebView** es como poner un televisor dentro de tu app. Tu app React Native es la habitación; el televisor (WebView) muestra una página web. Leaflet.js es la página web que se reproduce en ese televisor.
+
+## ¿Qué es un tile?
+
+Los mapas no son una foto gigante. Se dividen en mosaicos llamados **Tiles**.
+
+<TileVisualizacion client:load />
+
+Cada vez que te mueves, la app descarga los cuadrados necesarios. Este sistema `{z}/{x}/{y}` permite que el mapa cargue rápido incluso con conexiones lentas.
+
+:::danger[Licencia ODbL]
+La atribución `© OpenStreetMap contributors` **NO es opcional**. Es un requisito legal. Si tu app no la muestra, estás violando la licencia de los datos gratuitos que recibes.
+:::

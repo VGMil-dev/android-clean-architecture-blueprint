@@ -1,0 +1,79 @@
+---
+title: Configuración del Proyecto
+description: Preparando el entorno de desarrollo para mapas interactivos
+---
+
+import { AntesDespues } from '@components/react/0403/VisualHelpers';
+
+Antes de instalar mapas, debemos limpiar nuestra casa. El template de Expo viene con herramientas que no usaremos.
+
+## 1. El Gran Reset
+
+:::caution[Orden de los factores]
+Si construyes tu código sobre las pantallas demo de Expo, el debugging se vuelve una pesadilla porque mezclas tu lógica con código ajeno. 
+:::
+
+Ejecuta este comando para dejar tu carpeta `app/` lista para la batalla:
+
+```bash
+npm run reset-project
+```
+
+<AntesDespues />
+
+## 2. Instalación de Herramientas
+
+Necesitamos tres pilares: el navegador (WebView), el motor de mapas (Leaflet) y el acceso al GPS.
+
+```bash
+# 1. El navegador interno
+npx expo install react-native-webview
+
+# 2. El motor de Mapas
+npm install react-native-leaflet-view
+
+# 3. Acceso al GPS
+npx expo install expo-location
+```
+
+## 3. Configuración de Diseño (NativeWind v4)
+
+Utilizaremos la paleta **Neon** que define la identidad visual de RepoMovil.
+
+### tailwind.config.js
+Copia esta configuración para activar los colores corporativos:
+
+```javascript
+module.exports = {
+  content: ['./app/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
+  presets: [require("nativewind/preset")],
+  theme: {
+    extend: {
+      colors: {
+        'neon-green': '#39FF14',
+        'neon-cyan': '#00FFFF',
+        'neon-pink': '#FF2D78',
+        'neon-yellow': '#FFE600',
+        'dark-base': '#000000',
+        'dark-surface': '#0D0D0D',
+      },
+    },
+  },
+  plugins: [],
+};
+```
+
+:::danger[El veneno invisible]
+```json
+{
+  "config": {
+    "googleMaps": { "apiKey": "" }
+  }
+}
+```
+Aunque la key esté vacía (o si el bloque existe), Expo activará el SDK nativo y verás el **Mapa Negro**. La ausencia total de esta llave en el `app.json` es lo que permite que Leaflet funcione.
+:::
+
+## 4. Verificación
+
+Si has seguido los pasos, al ejecutar `npx expo start` deberías ver el código QR sin errores rojos en la consola. ¡Estamos listos para construir la arquitectura!

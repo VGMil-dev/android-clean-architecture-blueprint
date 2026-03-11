@@ -1,0 +1,63 @@
+---
+title: Marcadores y Pines
+description: Ponle nombre y alma al mapa con puntos de interés
+---
+
+import { InterfazExplicada, GaleriaMarcadores } from '@components/react/0403/VisualHelpers';
+
+Un marcador en un mapa digital es exactamente lo mismo que una banderita en un mapa de papel. La diferencia: la banderita digital puede guardar información, reaccionar al toque y actualizarse en tiempo real.
+
+## La Despensa: `constants/ciudades.ts`
+
+Imagina que mañana quieres agregar 50 ciudades más. Si los datos estuvieran dentro de la pantalla, tendrías que editar mucho código. Al separarlos en un archivo de constantes, tu app es más profesional.
+
+<InterfazExplicada client:load />
+
+## Galería de Marcadores
+
+En Leaflet podemos usar desde emojis hasta imágenes complejas como pines.
+
+<GaleriaMarcadores client:load />
+
+## El Mensaje Secreto: `postMessage`
+
+Cuando un usuario toca un marcador, ese clic ocurre **DENTRO** del WebView (JavaScript). Para que React Native (tu app) se entere, Leaflet tiene que "gritar" el mensaje a través de la puerta:
+
+1.  **En el Mapa:** El usuario hace clic.
+2.  **JavaScript:** `window.ReactNativeWebView.postMessage(id_ciudad)`
+3.  **React Native:** Captura el mensaje en la prop `onMessageReceived`.
+4.  **UI:** Muestra la `CiudadCard` animada.
+
+## Implementación: `app/marcadores.tsx`
+
+Nota cómo transformamos nuestros objetos `Ciudad` en el formato `MapMarker` que Leaflet entiende:
+
+```tsx
+// 📌 Concepto: Transformación de datos
+// Los datos que vienen de nuestra base de datos (CIUDADES) no siempre coinciden 
+// con lo que la librería de mapas espera. Aquí los "traducimos".
+const markers: MapMarker[] = CIUDADES.map(ciudad => ({
+    id: ciudad.id, // ID único para que Leaflet identifique el marcador.
+    position: { lat: ciudad.lat, lng: ciudad.lng }, // Ubicación geográfica.
+    icon: ciudad.emoji, // 🏛️ Podemos usar texto (emojis) como iconos flotantes.
+    // 📏 Ajustamos el tamaño del icono: Las capitales se ven más grandes para dar jerarquía visual.
+    size: ciudad.esCapital ? [45, 45] : [32, 32],
+}));
+
+// 📩 Manejo de mensajes desde el WebView (HTML/JS) hacia React Native.
+const handleMessage = (message: any) => {
+    // 👂 Escuchamos el evento específico 'onMapMarkerClicked'. 
+    // Este evento es disparado por Leaflet dentro del WebView cuando alguien toca un pin.
+    if (message.event === 'onMapMarkerClicked') {
+        // 🔍 Buscamos la ciudad original usando el ID que nos devolvió el clic.
+        const ciudad = CIUDADES.find(c => c.id === message.payload.mapMarkerID);
+        
+        // ✨ Si la encontramos, actualizamos el estado para mostrar su información 
+        // en un componente nativo de React Native (como una tarjeta informativa).
+        if (ciudad) setCiudadSeleccionada(ciudad);
+    }
+};
+```
+
+## Ejercicio
+Agrega 3 volcanes a la lista de ciudades con el emoji 🌋 y observa cómo aparecen automáticamente en el mapa.

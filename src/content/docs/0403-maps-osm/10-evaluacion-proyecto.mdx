@@ -1,0 +1,41 @@
+---
+title: Proyecto Final — Guía Turística
+description: Pon a prueba tus conocimientos construyendo una app completa de mapas y GPS
+---
+
+import { MisionCard, Rubrica } from '@components/react/0403/VisualHelpers';
+
+¡Has llegado al final del módulo! Es hora de integrar todo lo aprendido en un proyecto sólido que podrías incluir en tu portafolio profesional.
+
+Vas a construir una app de **Guía Turística del Ecuador** completa. El objetivo principal es demostrar la capacidad de incrustar y manipular un mapa para ofrecer valor real al usuario: trazando rutas, siguiendo su posición y explorando puntos de interés.
+
+### Especificaciones Técnicas
+
+Tu aplicación debe tener una arquitectura de 3 pantallas principales usando **Tabs** de Expo Router:
+
+1.  **📍 Explorar:** 
+    *   Cargar al menos 10 puntos turísticos de Ecuador.
+    *   Categorizarlos por emoji (🏛️ Museos, 🌋 Naturaleza, 🍛 Comida).
+    *   Al tocar un marcador, mostrar un popup con información básica.
+
+2.  **🛣️ Mi Ruta:** 
+    *   Trazar una ruta visual entre dos ciudades fijas usando OSRM.
+    *   Asegurar que la polilínea se visualice correctamente sobre las calles.
+
+3.  **📡 GPS en Vivo:** 
+    *   Pedir permisos de ubicación.
+    *   Usar un marcador especial que se mueva con el usuario.
+    *   Mostrar coordenadas en tiempo real abajo del mapa.
+
+## Requisitos de Integración
+*   Limpieza en el código de inyección del WebView.
+*   Manejo correcto de los estados de carga con **ActivityIndicators**.
+*   Mapa totalmente funcional y responsivo.
+
+<Rubrica client:load />
+
+## Bonus (+10 puntos)
+Implementa el plugin `markercluster` para que cuando hagas "zoom out", los marcadores de las ciudades se agrupen en burbujas con números.
+
+---
+¡El mundo es tu lienzo! Estamos ansiosos por ver tu creación brillando en el mapa.
