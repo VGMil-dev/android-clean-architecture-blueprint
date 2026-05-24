@@ -1,49 +1,39 @@
-# Starlight Starter Kit: Basics
+# Android Clean Architecture Blueprint
+### Enterprise Scaffolding for Scalable Mobile Applications
 
-[![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/tiny.svg)](https://starlight.astro.build)
+## Executive Summary
+This repository serves as the **official architectural blueprint** for building high-performance, testable, and maintainable Android applications. Developed as a reference for engineering teams, this scaffold implements **Clean Architecture** and the **MVVM (Model-View-ViewModel)** pattern, ensuring a strict separation between business logic, data management, and the user interface.
 
-```
-bun create astro@latest -- --template starlight
-```
+---
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## 🏗️ Architectural Topology
+The project follows a modular structure based on Clean Architecture layers:
 
-## 🚀 Project Structure
+*   **Domain Layer (`domain`):** The core of the application. Contains pure business logic, **Use Cases**, and domain models. Agnostic to any external library or framework.
+*   **Data Layer (`data`):** Manages data sourcing and persistence. Implements the **Repository Pattern** to orchestrate data between local databases (Room) and remote APIs (Retrofit/Rest).
+*   **Presentation Layer (`ui`):**
+    *   **ViewModel:** Handles UI state management and communication with the domain layer.
+    *   **View (Activities/Fragments):** Purely responsible for rendering the UI and handling user interaction.
+*   **Dependency Injection (`di`):** Centralized orchestration of object lifecycles using **Hilt/Dagger**, ensuring a decoupled and testable codebase.
+*   **Utilities (`util`):** Shared extensions and helper classes to maintain DRY (Don't Repeat Yourself) principles.
 
-Inside of your Astro + Starlight project, you'll see the following folders and files:
+---
 
-```
-.
-├── public/
-├── src/
-│   ├── assets/
-│   ├── content/
-│   │   └── docs/
-│   └── content.config.ts
-├── astro.config.mjs
-├── package.json
-└── tsconfig.json
-```
+## 🚀 Key Engineering Standards
+*   **Separation of Concerns:** Business logic is isolated from Android framework components.
+*   **Reactive State Management:** Use of ViewModels to ensure data survival during configuration changes.
+*   **Inversion of Control:** Robust Dependency Injection for modularity and easy mocking during unit testing.
+*   **Scalable Data Handling:** Unified repository pattern for transparent data fetching.
 
-Starlight looks for `.md` or `.mdx` files in the `src/content/docs/` directory. Each file is exposed as a route based on its file name.
+---
 
-Images can be added to `src/assets/` and embedded in Markdown with a relative link.
+## 🛠️ Technology Stack
+*   **Language:** Kotlin / Java.
+*   **Architecture:** Clean Architecture + MVVM.
+*   **DI:** Hilt / Dagger.
+*   **Persistence:** Room / DataStore.
+*   **Networking:** Retrofit / OkHttp.
 
-Static assets, like favicons, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `bun install`             | Installs dependencies                            |
-| `bun dev`             | Starts local dev server at `localhost:4321`      |
-| `bun build`           | Build your production site to `./dist/`          |
-| `bun preview`         | Preview your build locally, before deploying     |
-| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `bun astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Check out [Starlight’s docs](https://starlight.astro.build/), read [the Astro documentation](https://docs.astro.build), or jump into the [Astro Discord server](https://astro.build/chat).
+---
+**Architect:** Milton Velásquez — Software Architect & Technical Lead
+**Gavanti Engineering Lab**
